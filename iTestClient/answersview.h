@@ -31,6 +31,7 @@ class QButtonGroup;
 class QCheckBox;
 class QRadioButton;
 class QTextBrowser;
+class QLabel;
 
 class AnswerView : public QWidget
 {
@@ -61,15 +62,20 @@ public slots:
 
 signals:
     void buttonReleased(Question::Answers);
+    void inputReleased(QString answer);
 
 protected slots:
     void emitButtonReleased(QAbstractButton *);
+    void emitInputReleased();
 
 private:
     QList<AnswerView *> av_answers;
     QList<int> av_ans_order;
     QButtonGroup *av_grp_checkboxes;
     QButtonGroup *av_grp_radiobuttons;
+    QLabel *av_inputanswer_label;
+    QTextBrowser *av_input_text;
+
 };
 
 #endif // ANSWERSVIEW_H

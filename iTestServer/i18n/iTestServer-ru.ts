@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>Answers:</source>
-        <translation>Ответы:</translation>
+        <translation type="vanished">Ответы:</translation>
     </message>
     <message>
         <source>Correct:</source>
@@ -84,6 +84,22 @@
     <message>
         <source>Multiple choice questions allow selecting more answers</source>
         <translation>Вопросы с множественным выбором позволяют выбирать несколько ответов</translation>
+    </message>
+    <message>
+        <source>Open question</source>
+        <translation>Открытый вопрос</translation>
+    </message>
+    <message>
+        <source>Open questions allow enter the answer manually</source>
+        <translation>Открытые вопросы позволяют вводить ответ вручную</translation>
+    </message>
+    <message>
+        <source>Question type:</source>
+        <translation>Тип вопроса:</translation>
+    </message>
+    <message>
+        <source>Valid answers:</source>
+        <translation>Допустимые варианты ответов:</translation>
     </message>
 </context>
 <context>

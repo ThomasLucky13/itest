@@ -49,7 +49,18 @@ QList<int> QuestionItem::answerOrder() { return q_ans_order; }
 
 Question::Answers QuestionItem::answered() { return q_answer; }
 
+QString QuestionItem::str_answered() { return q_str_answer; }
+
+bool QuestionItem::isAnswered()
+{
+    if (q_answer != Question::None) return true;
+    if (q_str_answer.length() > 0) return true;
+    return false;
+}
+
 void QuestionItem::setAnswered(Question::Answers ans) { q_answer = ans; }
+
+void QuestionItem::setAnswered(QString ans) { q_str_answer = ans; }
 
 void QuestionItem::addSvgItem(const QString &name, const QString &svg)
 {

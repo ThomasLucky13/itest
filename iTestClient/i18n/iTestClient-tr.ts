@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="tr_TR">
+<TS version="2.1" language="tr_TR">
 <context>
     <name>AboutWidget</name>
     <message>
@@ -38,6 +38,13 @@
     <message>
         <source>http://www.gnu.org/licenses/gpl-2.0.html</source>
         <translation>http://www.gnu.org/licenses/gpl-2.0.html</translation>
+    </message>
+</context>
+<context>
+    <name>AnswersView</name>
+    <message>
+        <source>Enter your answer:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
