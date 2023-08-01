@@ -32,6 +32,7 @@ class QCheckBox;
 class QRadioButton;
 class QTextBrowser;
 class QLabel;
+class QLineEdit;
 
 class AnswerView : public QWidget
 {
@@ -66,7 +67,7 @@ signals:
 
 protected slots:
     void emitButtonReleased(QAbstractButton *);
-    void emitInputReleased();
+    void emitInputReleased(const QString &text);
 
 private:
     QList<AnswerView *> av_answers;
@@ -74,7 +75,7 @@ private:
     QButtonGroup *av_grp_checkboxes;
     QButtonGroup *av_grp_radiobuttons;
     QLabel *av_inputanswer_label;
-    QTextBrowser *av_input_text;
+    QLineEdit *av_input_text;
 
 };
 

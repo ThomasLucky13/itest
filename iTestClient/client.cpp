@@ -195,7 +195,7 @@ void MainWindow::readResults(QString input)
             QStringList answer_tamples = item->answers();
             for (int i =0; i < answer_tamples.count(); ++i)
             {
-                if (item->str_answered() == answer_tamples.at(i))
+                if (item->str_answered().toLower() == answer_tamples.at(i).toLower())
                     item->setAnswered((Question::Answer)(i+1));
             }
         }

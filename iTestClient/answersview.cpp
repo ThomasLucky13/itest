@@ -26,6 +26,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QLineEdit>
 
 AnswerView::AnswerView(int i, AnswersView *parent):
 QWidget(parent) {
@@ -52,10 +53,8 @@ QWidget(parent) {
     vlayout->setSpacing(0);
 #endif
     av_inputanswer_label = new QLabel(tr("Enter your answer:"), this);
-    av_input_text = new QTextBrowser(this);
+    av_input_text = new QLineEdit(this);
     av_input_text->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    av_input_text->setFontPointSize(15);
-    av_inputanswer_label->setFont(av_input_text->font());
     av_input_text->setMaximumSize(16777215, 15 * 5);
     av_input_text->setReadOnly(false);
     vlayout->addSpacerItem(
@@ -77,7 +76,7 @@ QWidget(parent) {
     }
     QObject::connect(av_grp_checkboxes, SIGNAL(buttonReleased(QAbstractButton *)), this, SLOT(emitButtonReleased(QAbstractButton *)));
     QObject::connect(av_grp_radiobuttons, SIGNAL(buttonReleased(QAbstractButton *)), this, SLOT(emitButtonReleased(QAbstractButton *)));
-    QObject::connect(av_input_text, SIGNAL(textChanged()), this, SLOT(emitInputReleased()));
+    QObject::connect(av_input_text, SIGNAL(textChanged(QString)), this, SLOT(emitInputReleased(QString)));
 }
 
 void AnswersView::setAnswers(const QStringList &answers, Question::Answers selected_answers, Question::SelectionType selectiontype, QList<int> ans_order)
@@ -149,7 +148,7 @@ void AnswersView::emitButtonReleased(QAbstractButton *)
     emit buttonReleased(selectedAnswers());
 }
 
-void AnswersView::emitInputReleased()
+void AnswersView::emitInputReleased(const QString &text)
 {
-    emit inputReleased(av_input_text->toPlainText());
+    emit inputReleased(text);
 }
