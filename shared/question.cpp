@@ -165,6 +165,10 @@ QStringList Question::answers() { return q_answers; }
 
 void Question::setAnswers(const QStringList &answers) { q_answers = answers; }
 
+QStringList Question::compareAnswers() { return q_compareAnswers; }
+
+void Question::setCompareAnswers(const QStringList &compareAnswers) { q_compareAnswers = compareAnswers; }
+
 Question::Answer Question::correctAnswer() { return Question::Answer((int)q_correctanswers); }
 
 Question::Answers Question::correctAnswers() { return q_correctanswers; }

@@ -208,6 +208,17 @@ QStringList AnswersEdit::answers()
     return answers;
 }
 
+QStringList AnswersEdit::compareAnswers()
+{
+    QStringList answers;
+    for (int i = 0; i < 9; ++i) {
+        if (ae_compare_answers.at(i)->isVisible()) {
+            answers << removeLineBreaks(ae_compare_answers.at(i)->ans_text->text());
+        }
+    }
+    return answers;
+}
+
 void AnswersEdit::setCorrectAnswers(Question::Answers correct_answers)
 {
     for (int i = 0; i < 9; ++i) {
@@ -335,6 +346,8 @@ Question::SelectionType AnswersEdit::selectionType()
         return Question::MultiSelection;
     if(ae_openquestion->isChecked())
         return Question::OpenQuestion;
+    if(ae_comparison->isChecked())
+        return Question::Comparison;
     return Question::SingleSelection;
 }
 

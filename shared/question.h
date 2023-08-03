@@ -80,6 +80,8 @@ public slots:
     void setAnswerCorrect(Answers, bool);
     QStringList answers();
     void setAnswers(const QStringList &);
+    QStringList compareAnswers();
+    void setCompareAnswers(const QStringList &);
     Answer correctAnswer();
     Answers correctAnswers();
     void setCorrectAnswers(Answers);
@@ -93,6 +95,7 @@ private:
     QString q_explanation;
     SelectionType q_selectiontype;
     QStringList q_answers;
+    QStringList q_compareAnswers;
     Answers q_correctanswers;
 
     friend class QuestionItem;

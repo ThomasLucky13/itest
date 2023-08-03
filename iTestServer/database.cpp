@@ -407,8 +407,18 @@ void MainWindow::openDB(const QString &openDBName, bool useCP1250)
                 item->setCorrectAnswers((Question::Answer)rfile.readLine().toInt());
                 int numanswers = rfile.readLine().toInt();
                 for (int a = 0; a < numanswers; ++a) { answers << rfile.readLine(); }
+                // Compare Answers
+                QString buffer = rfile.readLine();
+                if ( buffer == "[Q_COMP_ANS]")
+                {
+                    int numanswers2 = rfile.readLine().toInt();
+                    QStringList comp_answers;
+                    for (int a = 0; a < numanswers2; ++a) { comp_answers << rfile.readLine(); }
+                    item->setCompareAnswers(comp_answers);
+                    buffer = rfile.readLine();
+                }
                 // Explanation
-                if (rfile.readLine() != "[Q_EXPL]") { throw xInvalidDBFile(114); }
+                if (buffer != "[Q_EXPL]") { throw xInvalidDBFile(114); }
                 item->setExplanation(rfile.readLine());
             } else {
                 // Answer A

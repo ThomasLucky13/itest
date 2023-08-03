@@ -64,6 +64,7 @@ public:
     void setAnswers(const QStringList &);
     void setAnswers(const QStringList &, Question::Answers, Question::SelectionType = Question::SingleSelection, const QStringList & = QStringList());
     QStringList answers();
+    QStringList compareAnswers();
     void setCorrectAnswers(Question::Answers);
     Question::Answers correctAnswers();
     void replaceAnswer(int, const QString &);

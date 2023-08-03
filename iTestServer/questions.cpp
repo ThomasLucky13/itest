@@ -161,7 +161,7 @@ void MainWindow::setCurrentQuestion()
         LQCategoryComboBox->setCurrentIndex(current_db_categoryentries.value(item->category()));
         SQDifficultyComboBox->setCurrentIndex(item->difficulty());
         SQQuestionTextEdit->setHtml(item->text());
-        SQAnswersEdit->setAnswers(item->answers(), item->correctAnswers(), item->selectionType());
+        SQAnswersEdit->setAnswers(item->answers(), item->correctAnswers(), item->selectionType(), item->compareAnswers());
         SQExplanationLineEdit->setText(item->explanation());
         if (item->incorrectAnsCount() == 0 && item->correctAnsCount() == 0) {
             SQStatisticsLabel->setVisible(false);
@@ -268,6 +268,7 @@ void MainWindow::applyQuestionChanges()
     item->setDifficulty(SQDifficultyComboBox->currentIndex());
     item->setText(removeLineBreaks(SQQuestionTextEdit->toHtml()));
     item->setAnswers(SQAnswersEdit->answers());
+    item->setCompareAnswers(SQAnswersEdit->compareAnswers());
     item->setCorrectAnswers(SQAnswersEdit->correctAnswers());
     item->setSelectionType(SQAnswersEdit->selectionType());
     item->setExplanation(removeLineBreaks(SQExplanationLineEdit->text()));

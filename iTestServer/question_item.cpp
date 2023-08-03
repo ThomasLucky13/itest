@@ -147,6 +147,13 @@ QString QuestionItem::allProperties(bool itdb1_3)
             out.append(q_answers.at(i));
             out.append("\n");
         }
+        // Q_COMP_ANS
+        out.append("[Q_COMP_ANS]\n");
+        out.append(QString("%1\n").arg(q_compareAnswers.count()));
+        for (int i = 0; i < q_compareAnswers.count(); ++i) {
+            out.append(q_compareAnswers.at(i));
+            out.append("\n");
+        }
         // Q_EXPLANATION
         out.append("[Q_EXPL]\n");
         out.append(q_explanation);
