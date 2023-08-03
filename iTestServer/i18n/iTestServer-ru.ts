@@ -94,6 +94,14 @@
         <translation>Открытые вопросы позволяют вводить ответ вручную</translation>
     </message>
     <message>
+        <source>Comparison</source>
+        <translation>Cопоставление</translation>
+    </message>
+    <message>
+        <source>Comparison allow match words in pairs</source>
+        <translation>Соаоставление позволяет сопоставлять слова по парам</translation>
+    </message>
+    <message>
         <source>Question type:</source>
         <translation>Тип вопроса:</translation>
     </message>

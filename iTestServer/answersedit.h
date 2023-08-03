@@ -62,7 +62,7 @@ public:
     AnswersEdit(QWidget * = 0);
 
     void setAnswers(const QStringList &);
-    void setAnswers(const QStringList &, Question::Answers, Question::SelectionType = Question::SingleSelection);
+    void setAnswers(const QStringList &, Question::Answers, Question::SelectionType = Question::SingleSelection, const QStringList & = QStringList());
     QStringList answers();
     void setCorrectAnswers(Question::Answers);
     Question::Answers correctAnswers();
@@ -83,16 +83,19 @@ protected slots:
     void setSingleSelectionView(bool check);
     void setMultiSelectionView(bool check);
     void setOpenQuestionView(bool check);
+    void setComparisonView(bool check);
 
 protected:
     void enableAddAnswerButton();
 
 private:
     QList<AnswerEdit *> ae_answers;
+    QList<AnswerEdit *> ae_compare_answers;
     QToolButton *ae_add_button;
     QRadioButton *ae_singleselection;
     QRadioButton *ae_multiselection;
     QRadioButton *ae_openquestion;
+    QRadioButton *ae_comparison;
     QLabel *ae_answers_label;
     QLabel *ae_correct_label;
     QLabel *ae_openanswer_label;

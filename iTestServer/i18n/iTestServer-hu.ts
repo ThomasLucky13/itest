@@ -101,6 +101,14 @@
         <source>Valid answers:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Comparison</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comparison allow match words in pairs</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Client</name>
