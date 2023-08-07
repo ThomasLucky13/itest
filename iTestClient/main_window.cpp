@@ -200,7 +200,7 @@ void MainWindow::setCurrentQuestion()
         answersView->setEnabled(true);
         QuestionItem *item = current_test_questions.value(LQListWidget->currentItem());
         questionTextBrowser->setHtml(item->text());
-        answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder());
+        answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder(), item->compareAnswers());
         svgDisplayWidget->clear();
         if (item->numSvgItems() > 0) {
             svgDisplayWidget->setVisible(true);

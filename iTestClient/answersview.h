@@ -32,6 +32,7 @@ class QCheckBox;
 class QRadioButton;
 class QTextBrowser;
 class QLabel;
+class QPushButton;
 
 class AnswerView : public QWidget
 {
@@ -54,7 +55,7 @@ class AnswersView : public QWidget
 public:
     AnswersView(QWidget * = 0);
 
-    void setAnswers(const QStringList &, Question::Answers, Question::SelectionType, QList<int>);
+    void setAnswers(const QStringList &, Question::Answers, Question::SelectionType, QList<int>, const QStringList &);
     Question::Answers selectedAnswers();
 
 public slots:
@@ -73,9 +74,16 @@ private:
     QList<int> av_ans_order;
     QButtonGroup *av_grp_checkboxes;
     QButtonGroup *av_grp_radiobuttons;
+    QButtonGroup *av_grp_ansbuttons1;
+    QButtonGroup *av_grp_ansbuttons2;
     QLabel *av_inputanswer_label;
     QTextBrowser *av_input_text;
 
+    void showOpenQuestion(bool);
+    void hideComparison();
+    void hideSelectAnswer();
+
+    bool av_ans1_isDone, av_ans2_isDone;
 };
 
 #endif // ANSWERSVIEW_H

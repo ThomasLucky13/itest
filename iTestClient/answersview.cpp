@@ -26,6 +26,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QPushButton>
 
 AnswerView::AnswerView(int i, AnswersView *parent):
 QWidget(parent) {
@@ -65,56 +66,92 @@ QWidget(parent) {
     av_grp_checkboxes = new QButtonGroup(this);
     av_grp_checkboxes->setExclusive(false);
     av_grp_radiobuttons = new QButtonGroup(this);
+    av_grp_ansbuttons1 = new QButtonGroup(this);
+    av_grp_ansbuttons2 = new QButtonGroup(this);
+    av_ans1_isDone = false; av_ans2_isDone = false;
+    QVBoxLayout *vAnsLayout1 = new QVBoxLayout(this), *vAnsLayout2 = new QVBoxLayout(this);
+    vAnsLayout1->setContentsMargins(0, 0, 0, 0); vAnsLayout2->setContentsMargins(0, 0, 0, 0);
     for (int i = 0; i < 9; ++i) {
         AnswerView *ans = new AnswerView(i + 1, this);
+        QPushButton * cans = new QPushButton(this);
         if (i >= 4) {
             ans->setVisible(false);
         }
         av_answers << ans;
         av_grp_checkboxes->addButton(ans->ans_checkbox);
         av_grp_radiobuttons->addButton(ans->ans_radiobutton);
-        vlayout->addWidget(ans);
+        av_grp_ansbuttons1->addButton(cans, i);
+        vAnsLayout1->addWidget(ans);
+        vAnsLayout1->addWidget(cans);
     }
+    for (int i = 0; i < 9; ++i) {
+        QPushButton *ans = new QPushButton( this);
+        av_grp_ansbuttons2->addButton(ans, i);
+        vAnsLayout2->addWidget(ans);
+    }
+    QHBoxLayout *hAnsLayout = new QHBoxLayout(this);
+    hAnsLayout->addLayout(vAnsLayout1); hAnsLayout->addLayout(vAnsLayout2);
+    vlayout->addLayout(hAnsLayout);
     QObject::connect(av_grp_checkboxes, SIGNAL(buttonReleased(QAbstractButton *)), this, SLOT(emitButtonReleased(QAbstractButton *)));
     QObject::connect(av_grp_radiobuttons, SIGNAL(buttonReleased(QAbstractButton *)), this, SLOT(emitButtonReleased(QAbstractButton *)));
     QObject::connect(av_input_text, SIGNAL(textChanged()), this, SLOT(emitInputReleased()));
 }
 
-void AnswersView::setAnswers(const QStringList &answers, Question::Answers selected_answers, Question::SelectionType selectiontype, QList<int> ans_order)
+void AnswersView::setAnswers(const QStringList &answers, Question::Answers selected_answers, Question::SelectionType selectiontype, QList<int> ans_order,
+                             const QStringList & compAnswers)
 {
     if (selectiontype == Question::OpenQuestion)
     {
-        av_inputanswer_label->setVisible(true);
-        av_input_text->setVisible(true);
-        for (int i = 0; i < 9; ++i)
-        {
-            AnswerView *ans = av_answers.at(i);
-            ans->setVisible(false);
+        showOpenQuestion(true);
+        hideSelectAnswer();
+        hideComparison();
+    }
+    else if (selectiontype == Question::Comparison)
+    {
+        showOpenQuestion(false);
+        hideSelectAnswer();
+        for (int i = 0; i < 9; ++i) {
+            QPushButton *ans1 = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(i));
+            QPushButton *ans2 = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(i));
+            if (i < answers.count()) {
+                ans1->setText(answers.at(av_ans_order.at(i)));
+                ans1->setVisible(true);
+            } else {
+                ans1->setText("");
+                ans1->setVisible(false);
+            }
+            if (i < compAnswers.count()) {
+                ans2->setText(compAnswers.at(i));
+                ans2->setVisible(true);
+            } else {
+                ans2->setText("");
+                ans2->setVisible(false);
+            }
         }
     } else
     {
-        av_inputanswer_label->setVisible(false);
-        av_input_text->setVisible(false);
-    av_ans_order = ans_order;
-    av_grp_radiobuttons->setExclusive(false);
-    for (int i = 0; i < 9; ++i) {
-        AnswerView *ans = av_answers.at(i);
-        ans->ans_radiobutton->setVisible(selectiontype == Question::SingleSelection);
-        ans->ans_checkbox->setVisible(selectiontype == Question::MultiSelection);
-        if (i < answers.count()) {
-            ans->ans_text->setText(answers.at(av_ans_order.at(i)));
-            ans->ans_text->setFixedHeight(ans->ans_text->document()->size().height());
-            ans->ans_checkbox->setChecked(selected_answers.testFlag(Question::indexToAnswer(av_ans_order.at(i) + 1)));
-            ans->ans_radiobutton->setChecked(selected_answers.testFlag(Question::indexToAnswer(av_ans_order.at(i) + 1)));
-            ans->setVisible(true);
-        } else {
-            ans->ans_text->clear();
-            ans->ans_checkbox->setChecked(false);
-            ans->ans_radiobutton->setChecked(false);
-            ans->setVisible(false);
+        showOpenQuestion(false);
+        hideComparison();
+        av_ans_order = ans_order;
+        av_grp_radiobuttons->setExclusive(false);
+        for (int i = 0; i < 9; ++i) {
+            AnswerView *ans = av_answers.at(i);
+            ans->ans_radiobutton->setVisible(selectiontype == Question::SingleSelection);
+            ans->ans_checkbox->setVisible(selectiontype == Question::MultiSelection);
+            if (i < answers.count()) {
+                ans->ans_text->setText(answers.at(av_ans_order.at(i)));
+                ans->ans_text->setFixedHeight(ans->ans_text->document()->size().height());
+                ans->ans_checkbox->setChecked(selected_answers.testFlag(Question::indexToAnswer(av_ans_order.at(i) + 1)));
+                ans->ans_radiobutton->setChecked(selected_answers.testFlag(Question::indexToAnswer(av_ans_order.at(i) + 1)));
+                ans->setVisible(true);
+            } else {
+                ans->ans_text->clear();
+                ans->ans_checkbox->setChecked(false);
+                ans->ans_radiobutton->setChecked(false);
+                ans->setVisible(false);
+            }
         }
-    }
-    av_grp_radiobuttons->setExclusive(true);
+        av_grp_radiobuttons->setExclusive(true);
     }
 }
 
@@ -139,9 +176,17 @@ void AnswersView::clear()
         ans->ans_checkbox->setChecked(false);
         ans->ans_radiobutton->setChecked(false);
         ans->setVisible(i < 4);
+
+        QPushButton *comp_ans1 = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(i));
+        comp_ans1->setText("");
+        comp_ans1->setVisible(false);
+        QPushButton *comp_ans2 = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(i));
+        comp_ans2->setText("");
+        comp_ans2->setVisible(false);
     }
     av_grp_radiobuttons->setExclusive(true);
     av_input_text->setText("");
+    av_ans1_isDone = false; av_ans2_isDone = false;
 }
 
 void AnswersView::emitButtonReleased(QAbstractButton *)
@@ -152,4 +197,33 @@ void AnswersView::emitButtonReleased(QAbstractButton *)
 void AnswersView::emitInputReleased()
 {
     emit inputReleased(av_input_text->toPlainText());
+}
+
+void AnswersView::showOpenQuestion(bool isVisable)
+{
+    av_inputanswer_label->setVisible(isVisable);
+    av_input_text->setVisible(isVisable);
+}
+
+void AnswersView::hideComparison()
+{
+    for (int i = 0; i < 9; ++i)
+    {
+        QPushButton *ans = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(i));
+        ans->setVisible(false);
+    }
+    for (int i = 0; i < 9; ++i)
+    {
+        QPushButton *ans = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(i));
+        ans->setVisible(false);
+    }
+}
+
+void AnswersView::hideSelectAnswer()
+{
+    for (int i = 0; i < 9; ++i)
+    {
+        AnswerView *ans = av_answers.at(i);
+        ans->setVisible(false);
+    }
 }
