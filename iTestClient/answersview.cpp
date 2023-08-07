@@ -68,9 +68,11 @@ QWidget(parent) {
     av_grp_radiobuttons = new QButtonGroup(this);
     av_grp_ansbuttons1 = new QButtonGroup(this);
     av_grp_ansbuttons2 = new QButtonGroup(this);
-    av_ans1_isDone = false; av_ans2_isDone = false;
+    av_ans1_compInd = -1; av_ans2_compInd = -1;
     QVBoxLayout *vAnsLayout1 = new QVBoxLayout(this), *vAnsLayout2 = new QVBoxLayout(this);
     vAnsLayout1->setContentsMargins(0, 0, 0, 0); vAnsLayout2->setContentsMargins(0, 0, 0, 0);
+    vAnsLayout1->addSpacerItem(new QSpacerItem(20,40, QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Expanding));
+    vAnsLayout2->addSpacerItem(new QSpacerItem(20,40, QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Expanding));
     for (int i = 0; i < 9; ++i) {
         AnswerView *ans = new AnswerView(i + 1, this);
         QPushButton * cans = new QPushButton(this);
@@ -90,10 +92,14 @@ QWidget(parent) {
         vAnsLayout2->addWidget(ans);
     }
     QHBoxLayout *hAnsLayout = new QHBoxLayout(this);
+    vAnsLayout1->addSpacerItem(new QSpacerItem(20,40, QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Expanding));
+    vAnsLayout2->addSpacerItem(new QSpacerItem(20,40, QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Expanding));
     hAnsLayout->addLayout(vAnsLayout1); hAnsLayout->addLayout(vAnsLayout2);
     vlayout->addLayout(hAnsLayout);
     QObject::connect(av_grp_checkboxes, SIGNAL(buttonReleased(QAbstractButton *)), this, SLOT(emitButtonReleased(QAbstractButton *)));
     QObject::connect(av_grp_radiobuttons, SIGNAL(buttonReleased(QAbstractButton *)), this, SLOT(emitButtonReleased(QAbstractButton *)));
+    QObject::connect(av_grp_ansbuttons1, SIGNAL(idClicked(int)), this, SLOT(compareAnswer1Choosed(int)));
+    QObject::connect(av_grp_ansbuttons2, SIGNAL(idClicked(int)), this, SLOT(compareAnswer2Choosed(int)));
     QObject::connect(av_input_text, SIGNAL(textChanged()), this, SLOT(emitInputReleased()));
 }
 
@@ -186,7 +192,7 @@ void AnswersView::clear()
     }
     av_grp_radiobuttons->setExclusive(true);
     av_input_text->setText("");
-    av_ans1_isDone = false; av_ans2_isDone = false;
+    av_ans1_compInd = -1; av_ans2_compInd = -1;
 }
 
 void AnswersView::emitButtonReleased(QAbstractButton *)
@@ -226,4 +232,66 @@ void AnswersView::hideSelectAnswer()
         AnswerView *ans = av_answers.at(i);
         ans->setVisible(false);
     }
+}
+
+void AnswersView::compareAnswer1Choosed(int i)
+{
+    if(av_ans1_compInd!=-1)
+    {
+        if(av_ans1_compInd==i)
+        {
+            QPushButton *ans = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(i));
+            ans->setStyleSheet("background-color: rgb(255, 255, 255);");
+            av_ans1_compInd = -1;
+            return;
+        } else
+        {
+            QPushButton *ans = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(av_ans1_compInd));
+            ans->setStyleSheet("background-color: rgb(255, 255, 255);");
+        }
+    }
+    QPushButton *ans = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(i));
+    ans->setStyleSheet("background-color: rgb(204,243,252);");
+    av_ans1_compInd = i;
+    if(av_ans2_compInd > -1)
+    {
+        matchComparison();
+    }
+}
+
+void AnswersView::compareAnswer2Choosed(int i)
+{
+    if(av_ans2_compInd!=-1)
+    {
+        if(av_ans2_compInd==i)
+        {
+            QPushButton *ans = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(i));
+            ans->setStyleSheet("background-color: rgb(255, 255, 255);");
+            av_ans2_compInd = -1;
+            return;
+        } else
+        {
+            QPushButton *ans = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(av_ans2_compInd));
+            ans->setStyleSheet("background-color: rgb(255, 255, 255);");
+        }
+    }
+    QPushButton *ans = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(i));
+    ans->setStyleSheet("background-color: rgb(204,243,252);");
+    av_ans2_compInd = i;
+    if(av_ans1_compInd > -1)
+    {
+        matchComparison();
+    }
+}
+
+void AnswersView::matchComparison()
+{
+    QPushButton *ans1 = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(av_ans1_compInd));
+    ans1->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ans1->setVisible(false);
+    QPushButton *ans2 = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(av_ans2_compInd));
+    ans2->setStyleSheet("background-color: rgb(255, 255, 255);");
+    ans2->setVisible(false);
+
+    av_ans1_compInd = -1; av_ans2_compInd = -1;
 }

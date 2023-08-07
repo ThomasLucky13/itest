@@ -68,6 +68,8 @@ signals:
 protected slots:
     void emitButtonReleased(QAbstractButton *);
     void emitInputReleased();
+    void compareAnswer1Choosed(int i);
+    void compareAnswer2Choosed(int i);
 
 private:
     QList<AnswerView *> av_answers;
@@ -83,7 +85,9 @@ private:
     void hideComparison();
     void hideSelectAnswer();
 
-    bool av_ans1_isDone, av_ans2_isDone;
+    int av_ans1_compInd, av_ans2_compInd;
+
+    void matchComparison();
 };
 
 #endif // ANSWERSVIEW_H
