@@ -202,6 +202,13 @@ QString QuestionItem::allPublicProperties()
         out.append(q_answers.at(i));
         out.append("\n");
     }
+    // Q_COMP_ANSWERS
+    out.append("[Q_COMP_ANS]\n");
+    out.append(QString("%1\n").arg(q_compareAnswers.count()));
+    for (int i = 0; i < q_compareAnswers.count(); ++i) {
+        out.append(q_compareAnswers.at(i));
+        out.append("\n");
+    }
     // Q_SVG
     out.append("[Q_SVG]\n");
     out.append(QString("%1").arg(q_svgitems.count()));
