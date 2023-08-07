@@ -70,6 +70,7 @@ protected slots:
     void emitInputReleased();
     void compareAnswer1Choosed(int i);
     void compareAnswer2Choosed(int i);
+    void resetAnswersClick();
 
 private:
     QList<AnswerView *> av_answers;
@@ -80,6 +81,7 @@ private:
     QButtonGroup *av_grp_ansbuttons2;
     QLabel *av_inputanswer_label;
     QTextBrowser *av_input_text;
+    QPushButton *av_reanswer_button;
 
     void showOpenQuestion(bool);
     void hideComparison();

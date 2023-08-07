@@ -96,11 +96,20 @@ QWidget(parent) {
     vAnsLayout2->addSpacerItem(new QSpacerItem(20,40, QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Expanding));
     hAnsLayout->addLayout(vAnsLayout1); hAnsLayout->addLayout(vAnsLayout2);
     vlayout->addLayout(hAnsLayout);
+    av_reanswer_button = new QPushButton(this);
+    av_reanswer_button->setText(tr("Reset answer"));
+    av_reanswer_button->setIcon(QIcon(":/images/images/reload.png"));
+    av_reanswer_button->setIconSize(QSize(24,24));
+    QHBoxLayout *hReAnsLayout = new QHBoxLayout(this);
+    hReAnsLayout->addWidget(av_reanswer_button);
+    hReAnsLayout->addSpacerItem(new QSpacerItem(20,40,  QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Preferred));
+    vlayout->addLayout(hReAnsLayout);
     QObject::connect(av_grp_checkboxes, SIGNAL(buttonReleased(QAbstractButton *)), this, SLOT(emitButtonReleased(QAbstractButton *)));
     QObject::connect(av_grp_radiobuttons, SIGNAL(buttonReleased(QAbstractButton *)), this, SLOT(emitButtonReleased(QAbstractButton *)));
     QObject::connect(av_grp_ansbuttons1, SIGNAL(idClicked(int)), this, SLOT(compareAnswer1Choosed(int)));
     QObject::connect(av_grp_ansbuttons2, SIGNAL(idClicked(int)), this, SLOT(compareAnswer2Choosed(int)));
     QObject::connect(av_input_text, SIGNAL(textChanged()), this, SLOT(emitInputReleased()));
+    QObject::connect(av_reanswer_button, SIGNAL(clicked()), this, SLOT(resetAnswersClick()));
 }
 
 void AnswersView::setAnswers(const QStringList &answers, Question::Answers selected_answers, Question::SelectionType selectiontype, QList<int> ans_order,
@@ -116,6 +125,7 @@ void AnswersView::setAnswers(const QStringList &answers, Question::Answers selec
     {
         showOpenQuestion(false);
         hideSelectAnswer();
+        av_reanswer_button->setVisible(true);
         for (int i = 0; i < 9; ++i) {
             QPushButton *ans1 = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(i));
             QPushButton *ans2 = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(i));
@@ -213,6 +223,7 @@ void AnswersView::showOpenQuestion(bool isVisable)
 
 void AnswersView::hideComparison()
 {
+    av_reanswer_button->setVisible(false);
     for (int i = 0; i < 9; ++i)
     {
         QPushButton *ans = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(i));
@@ -293,5 +304,19 @@ void AnswersView::matchComparison()
     ans2->setStyleSheet("background-color: rgb(255, 255, 255);");
     ans2->setVisible(false);
 
+    av_ans1_compInd = -1; av_ans2_compInd = -1;
+}
+
+void AnswersView::resetAnswersClick()
+{
+    for (int i = 0; i < 9; ++i)
+    {
+        QPushButton *ans1 = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(i));
+        ans1->setStyleSheet("background-color: rgb(255, 255, 255);");
+        ans1->setVisible(ans1->text().length()>0);
+        QPushButton *ans2 = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(i));
+        ans2->setStyleSheet("background-color: rgb(255, 255, 255);");
+        ans2->setVisible(ans2->text().length()>0);
+    }
     av_ans1_compInd = -1; av_ans2_compInd = -1;
 }
