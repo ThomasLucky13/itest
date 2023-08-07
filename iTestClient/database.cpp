@@ -165,6 +165,7 @@ void MainWindow::loadTest(QString input)
     QStringList comp_answers;
     for (int i = 0; i < db_qnum; ++i) {
         answers.clear();
+        comp_answers.clear();
         // Question name
         if (in.readLine() != "[Q_NAME]") { errorInvalidData(); return; }
         item = new QuestionItem (in.readLine());
