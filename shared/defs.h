@@ -22,10 +22,10 @@
 
 #define ITEST_VERSION "2.0.0"
 #define F_ITEST_VERSION 1.9
-#define ITDB_VERSION "1.4"
-#define F_ITDB_VERSION 1.4
-#define ITOS_VERSION "1.4.2"
-#define F_ITOS_VERSION 1.42
+#define ITDB_VERSION "1.5"
+#define F_ITDB_VERSION 1.5
+#define ITOS_VERSION "1.5.0"
+#define F_ITOS_VERSION 1.5
 
 #define ITEST_URL "itest.sourceforge.net"
 
