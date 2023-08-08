@@ -113,7 +113,7 @@ QWidget(parent) {
 }
 
 void AnswersView::setAnswers(const QStringList &answers, Question::Answers selected_answers, Question::SelectionType selectiontype, QList<int> ans_order,
-                             const QStringList & compAnswers,const QMap<int,int> & comp_pairs)
+                             const QStringList & compAnswers,const QMap<int,int> & comp_pairs, QList<int> comp_ans_order)
 {
     if (selectiontype == Question::OpenQuestion)
     {
@@ -126,6 +126,7 @@ void AnswersView::setAnswers(const QStringList &answers, Question::Answers selec
         showOpenQuestion(false);
         hideSelectAnswer();
         av_ans_order = ans_order;
+        av_comp_ans_order = comp_ans_order;
         av_reanswer_button->setVisible(true);
         for (int i = 0; i < 9; ++i) {
             QPushButton *ans1 = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(i));
@@ -138,7 +139,7 @@ void AnswersView::setAnswers(const QStringList &answers, Question::Answers selec
                 ans1->setVisible(false);
             }
             if (i < compAnswers.count()) {
-                ans2->setText(compAnswers.at(i));
+                ans2->setText(compAnswers.at(av_comp_ans_order.at(i)));
                 int k = comp_pairs.key(i);
                 ans2->setVisible(!(comp_pairs.contains(k) && (comp_pairs.value(k)==i)));
             } else {

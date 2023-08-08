@@ -30,6 +30,7 @@ QuestionItem::QuestionItem(const QString &name)
      q_answer = Question::None;
      for (int i = 0; i < 9; ++i) {
          q_ans_order << i;
+         q_comp_ans_order << i;
      }
      allCompAnswered = false;
 }
@@ -44,9 +45,19 @@ void QuestionItem::shuffleAnswers()
         } while (q_ans_order.contains(rand));
         q_ans_order << rand;
     }
+
+    q_comp_ans_order.clear();
+    for (int i = 0; i < q_compareAnswers.count(); ++i) {
+        do {
+            rand = qrand() % q_compareAnswers.count();
+        } while (q_comp_ans_order.contains(rand));
+        q_comp_ans_order << rand;
+    }
 }
 
 QList<int> QuestionItem::answerOrder() { return q_ans_order; }
+
+QList<int> QuestionItem::compAnswerOrder() {return q_comp_ans_order; }
 
 Question::Answers QuestionItem::answered() { return q_answer; }
 

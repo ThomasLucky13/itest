@@ -55,7 +55,7 @@ class AnswersView : public QWidget
 public:
     AnswersView(QWidget * = 0);
 
-    void setAnswers(const QStringList &, Question::Answers, Question::SelectionType, QList<int>, const QStringList &, const QMap<int,int> &);
+    void setAnswers(const QStringList &, Question::Answers, Question::SelectionType, QList<int>, const QStringList &, const QMap<int,int> &, QList<int>);
     Question::Answers selectedAnswers();
 
 public slots:
@@ -77,6 +77,7 @@ protected slots:
 private:
     QList<AnswerView *> av_answers;
     QList<int> av_ans_order;
+    QList<int> av_comp_ans_order;
     QButtonGroup *av_grp_checkboxes;
     QButtonGroup *av_grp_radiobuttons;
     QButtonGroup *av_grp_ansbuttons1;

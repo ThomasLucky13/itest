@@ -32,6 +32,7 @@ public:
 public slots:
     void shuffleAnswers();
     QList<int> answerOrder();
+    QList<int> compAnswerOrder();
     Answers answered();
     QString str_answered();
     QMap<int, int> comp_answered();
@@ -50,6 +51,7 @@ public slots:
 
 private:
     QList<int> q_ans_order;
+    QList<int> q_comp_ans_order;
     Answers q_answer;
     QString q_str_answer;
     QMap<int, int> q_comp_answer;
