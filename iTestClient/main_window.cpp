@@ -163,14 +163,14 @@ void MainWindow::setQuestionAnswered(Question::Answers selected_answers)
     } else {
         LQListWidget->currentItem()->setBackground(QBrush(QColor(197, 255, 120)));
         LQListWidget->currentItem()->setForeground(QBrush(QColor(0, 0, 0)));
-        int progress = 0;
-        for (int i = 0; i < LQListWidget->count(); ++i) {
-            if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
-                progress++;
-            }
-        }
-        progressBar->setValue(progress);
     }
+    int progress = 0;
+    for (int i = 0; i < LQListWidget->count(); ++i) {
+        if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
+            progress++;
+        }
+    }
+    progressBar->setValue(progress);
 }
 
 void MainWindow::setQuestionAnswered(QString answer)
@@ -185,14 +185,14 @@ void MainWindow::setQuestionAnswered(QString answer)
     } else {
         LQListWidget->currentItem()->setBackground(QBrush(QColor(197, 255, 120)));
         LQListWidget->currentItem()->setForeground(QBrush(QColor(0, 0, 0)));
-        int progress = 0;
-        for (int i = 0; i < LQListWidget->count(); ++i) {
-            if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
-                progress++;
-            }
-        }
-        progressBar->setValue(progress);
     }
+    int progress = 0;
+    for (int i = 0; i < LQListWidget->count(); ++i) {
+        if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
+            progress++;
+        }
+    }
+    progressBar->setValue(progress);
 }
 
 void MainWindow::setQuestionAnswered(int a1, int a2, bool isAll)
@@ -209,14 +209,14 @@ void MainWindow::setQuestionAnswered(int a1, int a2, bool isAll)
     } else {
         LQListWidget->currentItem()->setBackground(QBrush(QColor(197, 255, 120)));
         LQListWidget->currentItem()->setForeground(QBrush(QColor(0, 0, 0)));
-        int progress = 0;
-        for (int i = 0; i < LQListWidget->count(); ++i) {
-            if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
-                progress++;
-            }
-        }
-        progressBar->setValue(progress);
     }
+    int progress = 0;
+    for (int i = 0; i < LQListWidget->count(); ++i) {
+        if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
+            progress++;
+        }
+    }
+    progressBar->setValue(progress);
 }
 
 void MainWindow::resetQuestionAnswered()
@@ -227,6 +227,13 @@ void MainWindow::resetQuestionAnswered()
     item->setAnswered(QMap<int, int>(), false);
     LQListWidget->currentItem()->setBackground(QBrush(QColor(255, 255, 255)));
     LQListWidget->currentItem()->setForeground(QBrush(QColor(0, 0, 0)));
+    int progress = 0;
+    for (int i = 0; i < LQListWidget->count(); ++i) {
+        if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
+            progress++;
+        }
+    }
+    progressBar->setValue(progress);
 
 }
 
@@ -237,7 +244,7 @@ void MainWindow::setCurrentQuestion()
         answersView->setEnabled(true);
         QuestionItem *item = current_test_questions.value(LQListWidget->currentItem());
         questionTextBrowser->setHtml(item->text());
-        answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder(), item->compareAnswers());
+        answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder(), item->compareAnswers(), item->comp_answered());
         svgDisplayWidget->clear();
         if (item->numSvgItems() > 0) {
             svgDisplayWidget->setVisible(true);
