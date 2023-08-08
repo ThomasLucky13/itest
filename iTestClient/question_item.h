@@ -34,8 +34,10 @@ public slots:
     QList<int> answerOrder();
     Answers answered();
     QString str_answered();
+    QMap<int, int> comp_answered();
     void setAnswered(Answers);
     void setAnswered(QString);
+    void setAnswered(QMap<int, int>, bool = false);
     double score();
     double maximumScore();
     void addSvgItem(const QString &, const QString &);
@@ -50,9 +52,11 @@ private:
     QList<int> q_ans_order;
     Answers q_answer;
     QString q_str_answer;
+    QMap<int, int> q_comp_answer;
     QStringList q_svglist;
     QMap<QString, QString> q_svgmap;
     static ScoringSystem q_scoringsystem;
+    bool allCompAnswered;
 };
 
 #endif // QUESTION_ITEM_H

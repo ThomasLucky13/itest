@@ -64,6 +64,8 @@ public slots:
 signals:
     void buttonReleased(Question::Answers);
     void inputReleased(QString answer);
+    void pairMatch(int a1, int a2, bool isAll);
+    void resetAnswers();
 
 protected slots:
     void emitButtonReleased(QAbstractButton *);

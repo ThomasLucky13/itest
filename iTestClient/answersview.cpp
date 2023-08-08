@@ -303,6 +303,13 @@ void AnswersView::matchComparison()
     QPushButton *ans2 = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(av_ans2_compInd));
     ans2->setStyleSheet("background-color: rgb(255, 255, 255);");
     ans2->setVisible(false);
+    bool isAll = true;
+    for(int i = 0; i < 9; ++i)
+    {
+         QPushButton *ansCheck = dynamic_cast<QPushButton*>(av_grp_ansbuttons1->button(i));
+         if (ansCheck->isVisible()) isAll = false;
+    }
+    emit pairMatch(av_ans1_compInd, av_ans2_compInd, isAll);
 
     av_ans1_compInd = -1; av_ans2_compInd = -1;
 }
@@ -318,5 +325,6 @@ void AnswersView::resetAnswersClick()
         ans2->setStyleSheet("background-color: rgb(255, 255, 255);");
         ans2->setVisible(ans2->text().length()>0);
     }
+    emit resetAnswers();
     av_ans1_compInd = -1; av_ans2_compInd = -1;
 }
