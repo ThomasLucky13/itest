@@ -31,6 +31,7 @@ public:
 
 public slots:
     void shuffleAnswers();
+    void shuffleCompAnswers();
     QList<int> answerOrder();
     QList<int> compAnswerOrder();
     Answers answered();

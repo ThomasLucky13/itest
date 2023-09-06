@@ -346,6 +346,7 @@ void MainWindow::randomlySelectQuestions()
         if (current_test_shuffle_answers) {
             current_db_questions.at(randlist.at(i))->shuffleAnswers();
         }
+        current_db_questions.at(randlist.at(i))->shuffleCompAnswers();
         QListWidgetItem *q_item = new QListWidgetItem;
         if (hideQuestionNamesCheckBox->isChecked()) {
             q_item->setText(QString("%1").arg(LQListWidget->count() + 1));
