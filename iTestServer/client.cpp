@@ -140,6 +140,24 @@ void Client::loadResults(QString input)
             }
             item->setCorrectAnswers(correct_answers);
         }
+        if (in.readLine() != "[Q_COMP_ANSWERED]")
+            return;
+        buffer = in.readLine();
+        if(item->selectionType() == Question::Comparison)
+        {
+            QList<QString> ans_res = buffer.split("!");
+            Question::Answers answered;
+            for (int i = 1; i < ans_res.count(); i+=2)
+            {
+                if (ans_res[i]==ans_res[i-1])
+                    answered |= Question::indexToAnswer(((i-1)/2) + 1);
+            }
+            ans = (Question::Answer)QString("%1").arg(answered).toInt();
+            Question::Answers correct_answers;
+            for (int i =0; i < item->answers().count(); ++i)
+                correct_answers |= Question::indexToAnswer(i + 1);
+            item->setCorrectAnswers(correct_answers);
+        }
         QuestionAnswer qans(item->correctAnswer(), ans, buffer, item->numAnswers(), item->category(), item->difficulty(), item->selectionType(), item->explanation());
         c_results->insert(item->name(), qans);
         c_score += qans.score(c_parent->current_db_scoringsystem);

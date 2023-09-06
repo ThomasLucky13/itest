@@ -69,6 +69,21 @@ QString QuestionItem::str_answered() { return q_str_answer; }
 
 QMap<int, int> QuestionItem::comp_answered() { return q_comp_answer; }
 
+QString QuestionItem::comp_ans_check()
+{
+    QString res;
+    QList<int> keys = q_comp_answer.keys();
+    for (int i = 0; i < keys.count(); ++i)
+    {
+        int k = keys[i];
+        res += QString().number(q_ans_order.at(k));
+        res += "!";
+        res += QString().number(q_comp_ans_order.at(q_comp_answer.value(k)));
+        res += "!";
+    }
+    return res;
+}
+
 QString QuestionItem::comp_answered_at(int i)
 {
     QString res = q_answers.at(q_ans_order.at(i));
@@ -79,6 +94,20 @@ QString QuestionItem::comp_answered_at(int i)
         res += q_compareAnswers.at(q_comp_ans_order.at(j));
     }
     return res;
+}
+
+QString QuestionItem::correct_comp_answered_at(int i)
+{
+    QString res = q_answers.at(q_ans_order.at(i));
+    res += " - ";
+    res += q_compareAnswers.at(q_ans_order.at(i));
+    return res;
+}
+bool QuestionItem::is_comp_answered_correct(int i)
+{
+    if (q_comp_answer.contains(i))
+        return (q_ans_order.at(i) == q_comp_ans_order.at(q_comp_answer.value(i)));
+    return false;
 }
 
 bool QuestionItem::isAnswered()

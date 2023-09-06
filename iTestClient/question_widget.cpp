@@ -140,16 +140,14 @@ void QuestionWidget::init(QuestionItem *item, bool highlight_correct_answers)
     {
         for (int i = 0; i < item->numAnswers(); ++i) {
             qw_lbl_answers.at(i)->setText(item->comp_answered_at(i));
-            //font.setBold(item->isAnswerAtIndexCorrect(ans_order.at(i) + 1) && highlight_correct_answers);
+            font.setBold(item->is_comp_answered_correct(i) && highlight_correct_answers);
             qw_lbl_answers.at(i)->setFont(font);
         }
-        /*
-         * For correct answers
-         * if (highlight_correct_answers)
-         *  for (int i = item->numAnswers(); i < qw_lbl_answers.count(); ++i) {
-                qw_lbl_answers.at(i)->setText(item->comp_answered_at(i-item->numAnswers()));
+        if (highlight_correct_answers)
+            for (int i = item->numAnswers(); i < qw_lbl_answers.count(); ++i) {
+                qw_lbl_answers.at(i)->setText(item->correct_comp_answered_at(i-item->numAnswers()));
                 qw_lbl_answers.at(i)->setFont(font);
-            }*/
+            }
     } else
     {
         for (int i = 0; i < qw_lbl_answers.count(); ++i) {

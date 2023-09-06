@@ -121,6 +121,9 @@ void MainWindow::sendResults()
             }
             out << QString("[Q_STR_ANSWERED]\n");
             out << QString("%1\n").arg(current_test_questions.value(LQListWidget->item(i))->str_answered());
+
+            out << QString("[Q_COMP_ANSWERED]\n");
+            out << QString("%1\n").arg(current_test_questions.value( LQListWidget->item(i))->comp_ans_check());
         }
         // ---------------------------------------------------------------------
         out.device()->seek(0);
@@ -160,6 +163,9 @@ void MainWindow::sendResults()
         sfile << QString("\n[Q_STR_ANSWERED]\n");
         sfile << current_test_questions.value(LQListWidget->item(i))->str_answered();
         sfile << endl;
+        sfile << QString("\n[Q_COMP_ANSWERED]\n");
+        sfile << current_test_questions.value(LQListWidget->item(i))->comp_ans_check();
+        sfile << endl;
     }
 }
 
@@ -198,6 +204,23 @@ void MainWindow::readResults(QString input)
                 if (item->str_answered() == answer_tamples.at(i))
                     item->setAnswered((Question::Answer)(i+1));
             }
+        }
+        if (item->selectionType() == Question::Comparison)
+        {
+            Question::Answers answered;
+            for (int i =0; i < item->answerOrder().count(); ++i)
+            {
+                if (item->is_comp_answered_correct(i))
+                    answered |= Question::indexToAnswer((item->answerOrder().at(i)+1));
+            }
+            item->setAnswered(answered);
+
+            Question::Answers cor_answered;
+            for (int i =0; i < item->numAnswers(); ++i)
+            {
+                    cor_answered |= Question::indexToAnswer(i+1);
+            }
+
         }
         current_test_score += item->score();
         maxscore += item->maximumScore();

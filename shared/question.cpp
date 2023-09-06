@@ -336,7 +336,7 @@ double QuestionItem::score()
         return q_correctanswers == Question::None ? q_scoringsystem.correctAnswer[q_difficulty] : q_scoringsystem.missingAnswer[q_difficulty];
     }
 
-    if (q_selectiontype == Question::MultiSelection) {
+    if ((q_selectiontype == Question::MultiSelection) || (q_selectiontype == Question::Comparison)) {
         if (q_scoringsystem.allowIncompleteAnswers) {
             if ((q_correctanswers & q_answer) == 0)
                 return q_scoringsystem.incorrectAnswer[q_difficulty];
