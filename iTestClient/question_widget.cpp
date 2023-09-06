@@ -74,6 +74,22 @@ void QuestionWidget::init(QuestionItem *item, bool highlight_correct_answers)
                         qw_lbl_answers << lbl;
                     }
                 } else
+                if (item->selectionType() == Question::Comparison)
+                {
+                    for (int i = 0; i < item->numAnswers(); ++i) {
+                        QLabel *lbl1 = new QLabel(this);
+                        lbl1->setWordWrap(true);
+                        vlayout1->addWidget(lbl1);
+                        qw_lbl_answers << lbl1;
+                    }
+                    for (int i = 0; i < item->numAnswers(); ++i)
+                    {
+                        QLabel *lbl = new QLabel(this);
+                        lbl->setWordWrap(true);
+                        vlayout2->addWidget(lbl);
+                        qw_lbl_answers << lbl;
+                    }
+                } else
                 {
                     for (int i = 0; i < item->numAnswers(); ++i) {
                         QLabel *lbl = new QLabel(this);
@@ -119,6 +135,21 @@ void QuestionWidget::init(QuestionItem *item, bool highlight_correct_answers)
             font.setUnderline(item->isAnswerWasEntered(ans_order.at(i-1), item->str_answered()));
             qw_lbl_answers.at(i)->setFont(font);
         }
+    } else
+    if (item->selectionType() == Question::Comparison)
+    {
+        for (int i = 0; i < item->numAnswers(); ++i) {
+            qw_lbl_answers.at(i)->setText(item->comp_answered_at(i));
+            //font.setBold(item->isAnswerAtIndexCorrect(ans_order.at(i) + 1) && highlight_correct_answers);
+            qw_lbl_answers.at(i)->setFont(font);
+        }
+        /*
+         * For correct answers
+         * if (highlight_correct_answers)
+         *  for (int i = item->numAnswers(); i < qw_lbl_answers.count(); ++i) {
+                qw_lbl_answers.at(i)->setText(item->comp_answered_at(i-item->numAnswers()));
+                qw_lbl_answers.at(i)->setFont(font);
+            }*/
     } else
     {
         for (int i = 0; i < qw_lbl_answers.count(); ++i) {

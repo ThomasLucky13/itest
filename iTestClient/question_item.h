@@ -37,6 +37,7 @@ public slots:
     Answers answered();
     QString str_answered();
     QMap<int, int> comp_answered();
+    QString comp_answered_at(int i);
     void setAnswered(Answers);
     void setAnswered(QString);
     void setAnswered(QMap<int, int>, bool = false);

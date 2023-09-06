@@ -69,6 +69,18 @@ QString QuestionItem::str_answered() { return q_str_answer; }
 
 QMap<int, int> QuestionItem::comp_answered() { return q_comp_answer; }
 
+QString QuestionItem::comp_answered_at(int i)
+{
+    QString res = q_answers.at(q_ans_order.at(i));
+    res += " - ";
+    if (q_comp_answer.contains(i))
+    {
+        int j = q_comp_answer.value(i);
+        res += q_compareAnswers.at(q_comp_ans_order.at(j));
+    }
+    return res;
+}
+
 bool QuestionItem::isAnswered()
 {
     if (q_answer != Question::None) return true;
