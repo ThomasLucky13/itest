@@ -24,6 +24,7 @@
 #include <QApplication>
 #include <QTextDocument>
 #include <QProgressDialog>
+#include <QRandomGenerator>
 
 int pow(int base, int exp)
 {
@@ -383,7 +384,7 @@ QList<int> Question::randomise(QList<Question *> questions, PassMark passmark, b
         for (int i = 0; i < qnum; ++i) {
             random_0:
             do {
-                rand = (qrand() + id) % questions.size();
+                rand = (QRandomGenerator::global()->generate() + id) % questions.size();
             } while (final_randlist.contains(rand));
             if (use_groups) {
                 if (!questions.at(rand)->group().isEmpty()) {
@@ -431,7 +432,7 @@ QList<int> Question::randomise(QList<Question *> questions, PassMark passmark, b
             for (int i = 0; i < passmark.qnum(c); ++i) {
                 random_1:
                 do {
-                    rand = (qrand() + id) % qflist[x].size();
+                    rand = (QRandomGenerator::global()->generate() + id) % qflist[x].size();
                 } while (randlist.contains(rand));
                 if (use_groups) {
                     if (!qflist[x].at(rand)->group().isEmpty()) {
@@ -468,7 +469,7 @@ QList<int> Question::randomise(QList<Question *> questions, PassMark passmark, b
         for (int i = 0; i < y; ++i) {
             random_2:
             do {
-                rand = (qrand() + id) % unusedqlist.size();
+                rand = (QRandomGenerator::global()->generate() + id) % unusedqlist.size();
             } while (randlist.contains(rand));
             if (use_groups) {
                 if (!unusedqlist.at(rand)->group().isEmpty()) {
