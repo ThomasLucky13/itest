@@ -113,13 +113,14 @@ QWidget(parent) {
 }
 
 void AnswersView::setAnswers(const QStringList &answers, Question::Answers selected_answers, Question::SelectionType selectiontype, QList<int> ans_order,
-                             const QStringList & compAnswers,const QMap<int,int> & comp_pairs, QList<int> comp_ans_order)
+                              QString str_answered, const QStringList & compAnswers,const QMap<int,int> & comp_pairs, QList<int> comp_ans_order)
 {
     if (selectiontype == Question::OpenQuestion)
     {
         showOpenQuestion(true);
         hideSelectAnswer();
         hideComparison();
+        av_input_text->setText(str_answered);
     }
     else if (selectiontype == Question::Comparison)
     {

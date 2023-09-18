@@ -244,7 +244,7 @@ void MainWindow::setCurrentQuestion()
         answersView->setEnabled(true);
         QuestionItem *item = current_test_questions.value(LQListWidget->currentItem());
         questionTextBrowser->setHtml(item->text());
-        answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder(), item->compareAnswers(), item->comp_answered(), item->compAnswerOrder());
+        answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder(), item->str_answered(), item->compareAnswers(), item->comp_answered(), item->compAnswerOrder());
         svgDisplayWidget->clear();
         if (item->numSvgItems() > 0) {
             svgDisplayWidget->setVisible(true);
