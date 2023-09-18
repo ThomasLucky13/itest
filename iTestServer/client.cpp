@@ -136,7 +136,7 @@ void Client::loadResults(QString input)
             Question::Answers correct_answers;
             for (int i =0; i < answer_tamples.count(); ++i)
             {
-                if (buffer == answer_tamples.at(i))
+                if (buffer.toLower() == answer_tamples.at(i).toLower())
                     ans = (Question::Answer)(i+1);
                 correct_answers.setFlag((Question::Answer)(i+1));
             }
