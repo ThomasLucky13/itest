@@ -841,6 +841,24 @@ void MainWindow::loadClientResults(QMap<QString, QuestionAnswer> *results, QTabl
         if(qans.selectionType() == Question::OpenQuestion)
         {
             item->setText(qans.str_answered());
+        }
+        else if (qans.selectionType() == Question::Comparison)
+        {
+            QString answString = "";
+            QStringList answs = q_item->answers();
+            QList<int> ansIndex = qans.compAnswered();
+            QStringList compAns = q_item->compareAnswers();
+            for (int i = 0; i < ansIndex.count(); ++i)
+            {
+                answString += QString("%1 - ").arg(answs.at(i));
+                int index = ansIndex.at(i);
+                if ((index>=0) && (index < compAns.count()))
+                {
+                    answString += compAns.at(index);
+                }
+                answString += "\n";
+            }
+            item->setText(answString);
         } else
             item->setText(Question::answerToString(qans.answered()));
         tw->setItem(row, 2, item);
@@ -854,6 +872,18 @@ void MainWindow::loadClientResults(QMap<QString, QuestionAnswer> *results, QTabl
                 answString+= QString("%1\n").arg(answs.at(i));
             }
             item->setText(answString);
+        }
+        else if (qans.selectionType() == Question::Comparison)
+        {
+            QString answString = "";
+            QStringList answs = q_item->answers();
+            QStringList compAns = q_item->compareAnswers();
+            for (int i = 0; i < compAns.count(); ++i)
+            {
+                answString += QString("%1 - %2\n").arg(answs.at(i)).arg(compAns.at(i));
+            }
+            item->setText(answString);
+
         } else
             item->setText(Question::answerToString(qans.correctAnswer()));
         tw->setItem(row, 3, item);

@@ -37,7 +37,7 @@ class Question: public QObject
 public:
     enum Answer { None = 0, A = 1, B = 2, C = 4, D = 8, E = 16, F = 32, G = 64, H = 128, I = 256 };
     Q_DECLARE_FLAGS(Answers, Answer)
-    enum SelectionType { SingleSelection = 0, MultiSelection = 1, OpenQuestion = 2 };
+    enum SelectionType { SingleSelection = 0, MultiSelection = 1, OpenQuestion = 2, Comparison = 3 };
     Q_DECLARE_FLAGS(SelectionTypeFlag, SelectionType)
 
     Question(const QString & = QString());
@@ -80,6 +80,8 @@ public slots:
     void setAnswerCorrect(Answers, bool);
     QStringList answers();
     void setAnswers(const QStringList &);
+    QStringList compareAnswers();
+    void setCompareAnswers(const QStringList &);
     Answer correctAnswer();
     Answers correctAnswers();
     void setCorrectAnswers(Answers);
@@ -93,6 +95,7 @@ private:
     QString q_explanation;
     SelectionType q_selectiontype;
     QStringList q_answers;
+    QStringList q_compareAnswers;
     Answers q_correctanswers;
 
     friend class QuestionItem;

@@ -86,6 +86,8 @@ MainWindow::MainWindow()
 
     QObject::connect(answersView, SIGNAL(buttonReleased(Question::Answers)), this, SLOT(setQuestionAnswered(Question::Answers)));
     QObject::connect(answersView, SIGNAL(inputReleased(QString)), this, SLOT(setQuestionAnswered(QString)));
+    QObject::connect(answersView, SIGNAL(pairMatch(int, int, bool)), this, SLOT(setQuestionAnswered(int, int, bool)));
+    QObject::connect(answersView, SIGNAL(resetAnswers()), this, SLOT(resetQuestionAnswered()));
 
     for (int i = 0; i < 8; ++i) {
         infoTableWidget->setItem(i, 0, new QTableWidgetItem);
@@ -161,14 +163,14 @@ void MainWindow::setQuestionAnswered(Question::Answers selected_answers)
     } else {
         LQListWidget->currentItem()->setBackground(QBrush(QColor(197, 255, 120)));
         LQListWidget->currentItem()->setForeground(QBrush(QColor(0, 0, 0)));
-        int progress = 0;
-        for (int i = 0; i < LQListWidget->count(); ++i) {
-            if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
-                progress++;
-            }
-        }
-        progressBar->setValue(progress);
     }
+    int progress = 0;
+    for (int i = 0; i < LQListWidget->count(); ++i) {
+        if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
+            progress++;
+        }
+    }
+    progressBar->setValue(progress);
 }
 
 void MainWindow::setQuestionAnswered(QString answer)
@@ -183,14 +185,56 @@ void MainWindow::setQuestionAnswered(QString answer)
     } else {
         LQListWidget->currentItem()->setBackground(QBrush(QColor(197, 255, 120)));
         LQListWidget->currentItem()->setForeground(QBrush(QColor(0, 0, 0)));
-        int progress = 0;
-        for (int i = 0; i < LQListWidget->count(); ++i) {
-            if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
-                progress++;
-            }
-        }
-        progressBar->setValue(progress);
     }
+    int progress = 0;
+    for (int i = 0; i < LQListWidget->count(); ++i) {
+        if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
+            progress++;
+        }
+    }
+    progressBar->setValue(progress);
+}
+
+void MainWindow::setQuestionAnswered(int a1, int a2, bool isAll)
+{
+    if (!LQListWidget->currentIndex().isValid())
+        return;
+    QuestionItem *item = current_test_questions.value(LQListWidget->currentItem());
+    QMap<int, int> answers = item->comp_answered();
+    answers.insert(a1, a2);
+    item->setAnswered(answers, isAll);
+    if (!isAll) {
+        LQListWidget->currentItem()->setBackground(QBrush(QColor(255, 255, 255)));
+        LQListWidget->currentItem()->setForeground(QBrush(QColor(0, 0, 0)));
+    } else {
+        LQListWidget->currentItem()->setBackground(QBrush(QColor(197, 255, 120)));
+        LQListWidget->currentItem()->setForeground(QBrush(QColor(0, 0, 0)));
+    }
+    int progress = 0;
+    for (int i = 0; i < LQListWidget->count(); ++i) {
+        if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
+            progress++;
+        }
+    }
+    progressBar->setValue(progress);
+}
+
+void MainWindow::resetQuestionAnswered()
+{
+    if (!LQListWidget->currentIndex().isValid())
+        return;
+    QuestionItem *item = current_test_questions.value(LQListWidget->currentItem());
+    item->setAnswered(QMap<int, int>(), false);
+    LQListWidget->currentItem()->setBackground(QBrush(QColor(255, 255, 255)));
+    LQListWidget->currentItem()->setForeground(QBrush(QColor(0, 0, 0)));
+    int progress = 0;
+    for (int i = 0; i < LQListWidget->count(); ++i) {
+        if (current_test_questions.value(LQListWidget->item(i))->isAnswered()) {
+            progress++;
+        }
+    }
+    progressBar->setValue(progress);
+
 }
 
 void MainWindow::setCurrentQuestion()
@@ -200,7 +244,7 @@ void MainWindow::setCurrentQuestion()
         answersView->setEnabled(true);
         QuestionItem *item = current_test_questions.value(LQListWidget->currentItem());
         questionTextBrowser->setHtml(item->text());
-        answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder());
+        answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder(), item->compareAnswers(), item->comp_answered(), item->compAnswerOrder());
         svgDisplayWidget->clear();
         if (item->numSvgItems() > 0) {
             svgDisplayWidget->setVisible(true);

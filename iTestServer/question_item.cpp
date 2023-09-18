@@ -147,6 +147,13 @@ QString QuestionItem::allProperties(bool itdb1_3)
             out.append(q_answers.at(i));
             out.append("\n");
         }
+        // Q_COMP_ANS
+        out.append("[Q_COMP_ANS]\n");
+        out.append(QString("%1\n").arg(q_compareAnswers.count()));
+        for (int i = 0; i < q_compareAnswers.count(); ++i) {
+            out.append(q_compareAnswers.at(i));
+            out.append("\n");
+        }
         // Q_EXPLANATION
         out.append("[Q_EXPL]\n");
         out.append(q_explanation);
@@ -195,18 +202,26 @@ QString QuestionItem::allPublicProperties()
         out.append(q_answers.at(i));
         out.append("\n");
     }
+    // Q_COMP_ANSWERS
+    out.append("[Q_COMP_ANS]\n");
+    out.append(QString("%1\n").arg(q_compareAnswers.count()));
+    for (int i = 0; i < q_compareAnswers.count(); ++i) {
+        out.append(q_compareAnswers.at(i));
+        out.append("\n");
+    }
     // Q_SVG
     out.append("[Q_SVG]\n");
     out.append(QString("%1").arg(q_svgitems.count()));
     return out;
 }
 
-QuestionAnswer::QuestionAnswer(Question::Answer correct, Question::Answer ans, QString n_str_answered, int num_answers, int category, int difficulty, Question::SelectionType type, const QString &explanation)
+QuestionAnswer::QuestionAnswer(Question::Answer correct, Question::Answer ans, QString n_str_answered, int num_answers, QList<int> n_compAnswered, int category, int difficulty, Question::SelectionType type, const QString &explanation)
 {
     qa_answered = ans;
     qa_correct_answer = correct;
     qa_str_answered = n_str_answered;
     qa_num_answers = num_answers;
+    qa_compAnswered = n_compAnswered;
     qa_category = category;
     q_difficulty = difficulty;
     q_selectiontype = type;
@@ -224,6 +239,10 @@ Question::Answer QuestionAnswer::correctAnswer() { return qa_correct_answer; }
 void QuestionAnswer::setNumAnswers(int num_answers) { qa_num_answers = num_answers; }
 
 int QuestionAnswer::numAnswers() { return qa_num_answers; }
+
+void QuestionAnswer::setCompAnswered(QList<int> ans) { qa_compAnswered = ans; }
+
+QList<int> QuestionAnswer::compAnswered() { return qa_compAnswered; }
 
 /*bool QuestionAnswer::isAnsweredCorrectly()
 {

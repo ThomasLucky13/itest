@@ -407,6 +407,17 @@ void MainWindow::openDB(const QString &openDBName, bool useCP1250)
                 item->setCorrectAnswers((Question::Answer)rfile.readLine().toInt());
                 int numanswers = rfile.readLine().toInt();
                 for (int a = 0; a < numanswers; ++a) { answers << rfile.readLine(); }
+                if (db_version >= 1.5)
+                {
+                    // Compare Answers
+                    if ( rfile.readLine() == "[Q_COMP_ANS]")
+                    {
+                        int numanswers2 = rfile.readLine().toInt();
+                        QStringList comp_answers;
+                        for (int a = 0; a < numanswers2; ++a) { comp_answers << rfile.readLine(); }
+                        item->setCompareAnswers(comp_answers);
+                    }
+                }
                 // Explanation
                 if (rfile.readLine() != "[Q_EXPL]") { throw xInvalidDBFile(114); }
                 item->setExplanation(rfile.readLine());
@@ -593,7 +604,7 @@ void MainWindow::openDB(const QString &openDBName, bool useCP1250)
                         c_ans = (Question::Answer)rfile.readLine().toInt();
                     }
 
-                    QuestionAnswer qans(c_ans, ans,"rfile.readLine()", item ? item->numAnswers() : 9, ans_category, ans_dif, ans_selectiontype);
+                    QuestionAnswer qans(c_ans, ans,"rfile.readLine()", item ? item->numAnswers() : 9, QList<int>(), ans_category, ans_dif, ans_selectiontype);
                     results->insert(db_buffer, qans);
                 }
                 student->setResults(results);

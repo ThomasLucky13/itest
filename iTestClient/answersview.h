@@ -32,6 +32,7 @@ class QCheckBox;
 class QRadioButton;
 class QTextBrowser;
 class QLabel;
+class QPushButton;
 
 class AnswerView : public QWidget
 {
@@ -54,7 +55,7 @@ class AnswersView : public QWidget
 public:
     AnswersView(QWidget * = 0);
 
-    void setAnswers(const QStringList &, Question::Answers, Question::SelectionType, QList<int>);
+    void setAnswers(const QStringList &, Question::Answers, Question::SelectionType, QList<int>, const QStringList &, const QMap<int,int> &, QList<int>);
     Question::Answers selectedAnswers();
 
 public slots:
@@ -63,19 +64,35 @@ public slots:
 signals:
     void buttonReleased(Question::Answers);
     void inputReleased(QString answer);
+    void pairMatch(int a1, int a2, bool isAll);
+    void resetAnswers();
 
 protected slots:
     void emitButtonReleased(QAbstractButton *);
     void emitInputReleased();
+    void compareAnswer1Choosed(int i);
+    void compareAnswer2Choosed(int i);
+    void resetAnswersClick();
 
 private:
     QList<AnswerView *> av_answers;
     QList<int> av_ans_order;
+    QList<int> av_comp_ans_order;
     QButtonGroup *av_grp_checkboxes;
     QButtonGroup *av_grp_radiobuttons;
+    QButtonGroup *av_grp_ansbuttons1;
+    QButtonGroup *av_grp_ansbuttons2;
     QLabel *av_inputanswer_label;
     QTextBrowser *av_input_text;
+    QPushButton *av_reanswer_button;
 
+    void showOpenQuestion(bool);
+    void hideComparison();
+    void hideSelectAnswer();
+
+    int av_ans1_compInd, av_ans2_compInd;
+
+    void matchComparison();
 };
 
 #endif // ANSWERSVIEW_H

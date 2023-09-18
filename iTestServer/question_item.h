@@ -31,6 +31,7 @@ public:
                    Question::Answer ans = Question::None,
                    QString n_str_answered = "",
                    int num_answers = 9,
+                   QList<int> n_compAnswered = QList<int>(),
                    int category = -1,
                    int difficulty = 0,
                    Question::SelectionType type = Question::SingleSelection,
@@ -43,6 +44,8 @@ public:
     Question::Answer correctAnswer();
     void setNumAnswers(int);
     int numAnswers();
+    void setCompAnswered(QList<int>);
+    QList<int> compAnswered();
     double score(const ScoringSystem &);
     double maximumScore(const ScoringSystem &);
     void setCategory(int);
@@ -58,6 +61,7 @@ private:
     Question::Answer qa_answered;
     Question::Answer qa_correct_answer;
     QString qa_str_answered;
+    QList<int> qa_compAnswered;
     int qa_num_answers;
     int qa_category;
     int q_difficulty;

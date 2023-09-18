@@ -31,11 +31,20 @@ public:
 
 public slots:
     void shuffleAnswers();
+    void shuffleCompAnswers();
     QList<int> answerOrder();
+    QList<int> compAnswerOrder();
     Answers answered();
     QString str_answered();
+    QMap<int, int> comp_answered();
+    QString comp_ans_check();
+    QString comp_ans_names();
+    QString comp_answered_at(int i);
+    QString correct_comp_answered_at(int i);
+    bool is_comp_answered_correct(int i);
     void setAnswered(Answers);
     void setAnswered(QString);
+    void setAnswered(QMap<int, int>, bool = false);
     double score();
     double maximumScore();
     void addSvgItem(const QString &, const QString &);
@@ -48,11 +57,14 @@ public slots:
 
 private:
     QList<int> q_ans_order;
+    QList<int> q_comp_ans_order;
     Answers q_answer;
     QString q_str_answer;
+    QMap<int, int> q_comp_answer;
     QStringList q_svglist;
     QMap<QString, QString> q_svgmap;
     static ScoringSystem q_scoringsystem;
+    bool allCompAnswered;
 };
 
 #endif // QUESTION_ITEM_H

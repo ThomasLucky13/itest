@@ -162,8 +162,10 @@ void MainWindow::loadTest(QString input)
     // Questions
     QuestionItem *item;
     QStringList answers;
+    QStringList comp_answers;
     for (int i = 0; i < db_qnum; ++i) {
         answers.clear();
+        comp_answers.clear();
         // Question name
         if (in.readLine() != "[Q_NAME]") { errorInvalidData(); return; }
         item = new QuestionItem (in.readLine());
@@ -192,6 +194,16 @@ void MainWindow::loadTest(QString input)
             int numanswers = in.readLine().toInt();
             for (int a = 0; a < numanswers; ++a) {
                 answers << in.readLine();
+            }
+            if (db_version >= 1.5)
+            {
+                // Compare answers
+                if (in.readLine() != "[Q_COMP_ANS]") { errorInvalidData(); return; }
+                int numanswers2 = in.readLine().toInt();
+                for (int a = 0; a < numanswers2; ++a) {
+                    comp_answers << in.readLine();
+                }
+                item->setCompareAnswers(comp_answers);
             }
         } else {
             // Answer A
@@ -334,6 +346,7 @@ void MainWindow::randomlySelectQuestions()
         if (current_test_shuffle_answers) {
             current_db_questions.at(randlist.at(i))->shuffleAnswers();
         }
+        current_db_questions.at(randlist.at(i))->shuffleCompAnswers();
         QListWidgetItem *q_item = new QListWidgetItem;
         if (hideQuestionNamesCheckBox->isChecked()) {
             q_item->setText(QString("%1").arg(LQListWidget->count() + 1));

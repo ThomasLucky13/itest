@@ -92,6 +92,10 @@ QWidget(parent) {
     ae_openquestion->setStatusTip(tr("Open questions allow enter the answer manually"));
     hlayout->addWidget(ae_openquestion);
     connect(ae_openquestion, SIGNAL(toggled(bool)), this, SLOT(setOpenQuestionView(bool)));
+    ae_comparison = new QRadioButton(tr("Comparison"), this);
+    ae_comparison->setStatusTip(tr("Comparison allow match words in pairs"));
+    hlayout->addWidget(ae_comparison);
+    connect(ae_comparison, SIGNAL(toggled(bool)), this, SLOT(setComparisonView(bool)));
 #ifdef Q_OS_MAC
 #if QT_VERSION < 0x040400
     hlayout->addSpacing(6);
@@ -111,18 +115,33 @@ QWidget(parent) {
     vlayout->addLayout(vlayout2);
 #endif
     vlayout->addLayout(hlayout2);
+    QVBoxLayout *vlayout_ans1 = new QVBoxLayout;
+    vlayout_ans1->setContentsMargins(0, 0, 0, 0); vlayout_ans1->setSpacing(6);
+    QVBoxLayout *vlayout_ans2 = new QVBoxLayout;
+    vlayout_ans2->setContentsMargins(0, 0, 0, 0); vlayout_ans2->setSpacing(6);
     for (int i = 0; i < 9; ++i) {
         AnswerEdit *ans = new AnswerEdit(i, this);
+        AnswerEdit *ans_2 = new AnswerEdit(i, this);
+        ans_2->ans_label->setText(QString::number(i+1));
+        ans_2->ans_correct->setVisible(false);
+        ans_2->ans_remove->setVisible(false);
         if (i >= 4) {
             ans->setVisible(false);
+            ans_2->setVisible(false);
         }
         ae_answers << ans;
-#ifndef Q_OS_MAC
-        vlayout->addWidget(ans);
-#else
-        vlayout2->addWidget(ans);
-#endif
+        ae_compare_answers << ans_2;
+        vlayout_ans1->addWidget(ans);
+        vlayout_ans2->addWidget(ans_2);
     }
+    QHBoxLayout *hlayout_ans = new QHBoxLayout;
+    hlayout_ans->addLayout(vlayout_ans1);
+    hlayout_ans->addLayout(vlayout_ans2);
+#ifndef Q_OS_MAC
+        vlayout->addLayout(hlayout_ans);
+#else
+        vlayout2->addLayout(hlayout_ans);
+#endif
     ae_add_button = new QToolButton(this);
     ae_add_button->setText(tr("Add answer"));
     ae_add_button->setIcon(QIcon(QString::fromUtf8(":/images/images/list-add.png")));
@@ -136,29 +155,42 @@ void AnswersEdit::setAnswers(const QStringList &answers)
 {
     for (int i = 0; i < 9; ++i) {
         AnswerEdit *ans = ae_answers.at(i);
+        AnswerEdit *ans2 = ae_compare_answers.at(i);
         if (i < answers.count()) {
             ans->ans_text->setText(answers.at(i));
+            ans2->ans_text->setText("");
             ans->setVisible(true);
+            ans2->setVisible(ae_comparison->isChecked());
         } else {
             ans->ans_text->clear();
             ans->setVisible(false);
+            ans2->ans_text->clear();
+            ans2->setVisible(false);
         }
     }
     enableAddAnswerButton();
 }
 
-void AnswersEdit::setAnswers(const QStringList &answers, Question::Answers correct_answers, Question::SelectionType selectiontype)
+void AnswersEdit::setAnswers(const QStringList &answers, Question::Answers correct_answers, Question::SelectionType selectiontype, const QStringList &answers2)
 {
     for (int i = 0; i < 9; ++i) {
         AnswerEdit *ans = ae_answers.at(i);
+        AnswerEdit *ans2 = ae_compare_answers.at(i);
         if (i < answers.count()) {
             ans->ans_text->setText(answers.at(i));
             ans->ans_correct->setChecked(correct_answers.testFlag(Question::indexToAnswer(i + 1)));
             ans->setVisible(true);
+            if(i < answers2.count())
+                ans2->ans_text->setText(answers2.at(i));
+            else
+                ans2->ans_text->setText("");
+            ans2->setVisible(ae_comparison->isChecked());
         } else {
             ans->ans_text->clear();
             ans->ans_correct->setChecked(false);
             ans->setVisible(false);
+            ans2->ans_text->clear();
+            ans2->setVisible(false);
         }
     }
     setSelectionType(selectiontype);
@@ -171,6 +203,17 @@ QStringList AnswersEdit::answers()
     for (int i = 0; i < 9; ++i) {
         if (ae_answers.at(i)->isVisible()) {
             answers << removeLineBreaks(ae_answers.at(i)->ans_text->text());
+        }
+    }
+    return answers;
+}
+
+QStringList AnswersEdit::compareAnswers()
+{
+    QStringList answers;
+    for (int i = 0; i < 9; ++i) {
+        if (ae_compare_answers.at(i)->isVisible()) {
+            answers << removeLineBreaks(ae_compare_answers.at(i)->ans_text->text());
         }
     }
     return answers;
@@ -217,6 +260,8 @@ void AnswersEdit::setSingleSelectionView(bool check)
         ae_openanswer_label->setVisible(false);
         for (int i = 0; i < 9; ++i)
             ae_answers.at(i)->ans_correct->setVisible(true);
+        for (int i = 0; i < 9; ++i)
+            ae_compare_answers.at(i)->setVisible(false);
     }
 }
 
@@ -228,6 +273,8 @@ void AnswersEdit::setMultiSelectionView(bool check)
         ae_openanswer_label->setVisible(false);
         for (int i = 0; i < 9; ++i)
             ae_answers.at(i)->ans_correct->setVisible(true);
+        for (int i = 0; i < 9; ++i)
+            ae_compare_answers.at(i)->setVisible(false);
     }
 }
 
@@ -239,6 +286,21 @@ void AnswersEdit::setOpenQuestionView(bool check)
         ae_openanswer_label->setVisible(true);
         for (int i = 0; i < 9; ++i)
             ae_answers.at(i)->ans_correct->setVisible(false);
+        for (int i = 0; i < 9; ++i)
+            ae_compare_answers.at(i)->setVisible(false);
+    }
+}
+
+void AnswersEdit::setComparisonView(bool check)
+{
+    if (check)
+    {
+        ae_correct_label->setVisible(false);
+        ae_openanswer_label->setVisible(false);
+        for (int i = 0; i < 9; ++i)
+            ae_answers.at(i)->ans_correct->setVisible(false);
+        for (int i = 0; i < 9; ++i)
+            ae_compare_answers.at(i)->setVisible(ae_answers.at(i)->isVisible());
     }
 }
 
@@ -263,6 +325,12 @@ void AnswersEdit::setSelectionType(Question::SelectionType type)
             setOpenQuestionView(true);
             break;
         }
+        case Question::Comparison:
+        {
+            ae_comparison->setChecked(true);
+            setComparisonView(true);
+            break;
+        }
         default:
         {
             ae_singleselection->setChecked(true);
@@ -278,6 +346,8 @@ Question::SelectionType AnswersEdit::selectionType()
         return Question::MultiSelection;
     if(ae_openquestion->isChecked())
         return Question::OpenQuestion;
+    if(ae_comparison->isChecked())
+        return Question::Comparison;
     return Question::SingleSelection;
 }
 
@@ -299,6 +369,8 @@ void AnswersEdit::addAnswer()
             ae_answers.at(i)->ans_text->clear();
             ae_answers.at(i)->ans_correct->setChecked(false);
             ae_answers.at(i)->setVisible(true);
+            ae_compare_answers.at(i)->ans_text->clear();
+            ae_compare_answers.at(i)->setVisible(ae_comparison->isChecked());
             enableAddAnswerButton();
             break;
         }
@@ -319,16 +391,22 @@ void AnswersEdit::removeAnswer(int i)
     if (i < 0 || i > 8)
         return;
     AnswerEdit *prev_ans = ae_answers.at(i);
+    AnswerEdit *prev_ans2 = ae_compare_answers.at(i);
     for (int n = i + 1; n < 9; ++n) {
         if (ae_answers.at(n)->isVisible()) {
             prev_ans->ans_text->setText(ae_answers.at(n)->ans_text->text());
             prev_ans->ans_correct->setChecked(ae_answers.at(n)->ans_correct->isChecked());
             prev_ans = ae_answers.at(n);
+
+            prev_ans2->ans_text->setText(ae_compare_answers.at(n)->ans_text->text());
+            prev_ans2 = ae_compare_answers.at(n);
         }
     }
     prev_ans->ans_text->clear();
     prev_ans->ans_correct->setChecked(false);
     prev_ans->setVisible(false);
+    prev_ans2->ans_text->clear();
+    prev_ans2->setVisible(false);
     enableAddAnswerButton();
 }
 
