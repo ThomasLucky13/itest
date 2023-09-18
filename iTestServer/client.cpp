@@ -128,8 +128,10 @@ void Client::loadResults(QString input)
         if (in.readLine() != "[Q_STR_ANSWERED]")
             return;
         buffer = in.readLine();
+        QString str_ans = "";
         if(item->selectionType() == Question::OpenQuestion)
         {
+            str_ans = buffer;
             QStringList answer_tamples = item->answers();
             Question::Answers correct_answers;
             for (int i =0; i < answer_tamples.count(); ++i)
@@ -158,7 +160,23 @@ void Client::loadResults(QString input)
                 correct_answers |= Question::indexToAnswer(i + 1);
             item->setCorrectAnswers(correct_answers);
         }
-        QuestionAnswer qans(item->correctAnswer(), ans, buffer, item->numAnswers(), item->category(), item->difficulty(), item->selectionType(), item->explanation());
+        if (in.readLine() != "[Q_COMP_ANSWERED_STR]")
+            return;
+        buffer = in.readLine();
+        QList<int> compAns;
+        for(int i = 0; i < item->answers().count(); ++i)
+        {
+            compAns.push_back(-1);
+        }
+        if(item->selectionType() == Question::Comparison)
+        {
+            QList<QString> ans_res = buffer.split("!");
+            for (int i = 0; i < compAns.count(); ++i)
+            {
+                compAns[i] = ans_res[i].toInt();
+            }
+        }
+        QuestionAnswer qans(item->correctAnswer(), ans, str_ans, item->numAnswers(), compAns,item->category(), item->difficulty(), item->selectionType(), item->explanation());
         c_results->insert(item->name(), qans);
         c_score += qans.score(c_parent->current_db_scoringsystem);
         c_maxscore += qans.maximumScore(c_parent->current_db_scoringsystem);

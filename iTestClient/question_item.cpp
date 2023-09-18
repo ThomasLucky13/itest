@@ -84,6 +84,28 @@ QString QuestionItem::comp_ans_check()
     return res;
 }
 
+QString QuestionItem::comp_ans_names()
+{
+    QString res;
+    QList<int> ans;
+    for (int i = 0 ; i < q_answers.count(); ++i)
+        ans.push_back(-1);
+    for (int i = 0; i < q_ans_order.count(); ++i)
+    {
+        if (q_comp_answer.keys().contains(i))
+        {
+            int k = q_ans_order.at(i);
+            ans[k] = q_comp_ans_order.at(q_comp_answer.value(i));
+        }
+    }
+    for (int i = 0; i < ans.count(); ++i)
+    {
+        res += QString().number(ans[i]);
+        res += "!";
+    }
+    return res;
+}
+
 QString QuestionItem::comp_answered_at(int i)
 {
     QString res = q_answers.at(q_ans_order.at(i));

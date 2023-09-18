@@ -38,6 +38,7 @@ public slots:
     QString str_answered();
     QMap<int, int> comp_answered();
     QString comp_ans_check();
+    QString comp_ans_names();
     QString comp_answered_at(int i);
     QString correct_comp_answered_at(int i);
     bool is_comp_answered_correct(int i);

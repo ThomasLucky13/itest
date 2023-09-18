@@ -124,6 +124,9 @@ void MainWindow::sendResults()
 
             out << QString("[Q_COMP_ANSWERED]\n");
             out << QString("%1\n").arg(current_test_questions.value( LQListWidget->item(i))->comp_ans_check());
+
+            out << QString("[Q_COMP_ANSWERED_STR]\n");
+            out << QString("%1\n").arg(current_test_questions.value( LQListWidget->item(i))->comp_ans_names());
         }
         // ---------------------------------------------------------------------
         out.device()->seek(0);
@@ -162,9 +165,10 @@ void MainWindow::sendResults()
         }
         sfile << QString("\n[Q_STR_ANSWERED]\n");
         sfile << current_test_questions.value(LQListWidget->item(i))->str_answered();
-        sfile << endl;
         sfile << QString("\n[Q_COMP_ANSWERED]\n");
         sfile << current_test_questions.value(LQListWidget->item(i))->comp_ans_check();
+        sfile << QString("\n[Q_COMP_ANSWERED_STR]\n");
+        sfile << current_test_questions.value( LQListWidget->item(i))->comp_ans_names();
         sfile << endl;
     }
 }
