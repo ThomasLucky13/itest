@@ -64,6 +64,7 @@ addQuestion_start:
         item->setCategory(SQCategoryComboBox->itemData(0).toInt());
         setQuestionItemColour(q_item, item->category());
     }
+    LQListWidget->setCurrentRow(LQListWidget->count()-1);
 }
 
 void MainWindow::deleteQuestion()
@@ -150,6 +151,15 @@ void MainWindow::duplicateQuestion()
     }
 }
 
+void MainWindow::changedCurrentQuestion()
+{
+    if (actionApply->isEnabled())
+    {
+        applyQuestionChanges(current_question_widgetItem);
+    }
+    current_question_widgetItem = LQListWidget->currentItem();
+    setCurrentQuestion();
+}
 void MainWindow::setCurrentQuestion()
 {
     if (LQListWidget->currentIndex().isValid()) {
@@ -192,15 +202,40 @@ void MainWindow::applyQuestionChanges()
     if (!LQListWidget->currentIndex().isValid())
         return;
     QListWidgetItem *q_item = LQListWidget->currentItem();
+    applyQuestionChanges(q_item);
+}
+
+void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
+{
     QuestionItem *item = current_db_questions.value(q_item);
-    // CHECK GROUP
+
     QString q_group = removeLineBreaks(SQGroupLineEdit->text());
+
+    QString q_name = removeLineBreaks(SQQuestionNameLineEdit->text());
     int q_category;
     if (SQCategoryComboBox->count() != 0) {
         q_category = SQCategoryComboBox->itemData(SQCategoryComboBox->currentIndex()).toInt();
     } else {
         q_category = -1;
     }
+
+    // CHECK IF SOMETHIG CHANGED
+    if (    (item->name() != q_name) || (item->group() != q_group) ||
+            (item->category() != q_category && item->category() != -1)||(item->difficulty() != SQDifficultyComboBox->currentIndex()) ||
+            (item->text() !=removeLineBreaks(SQQuestionTextEdit->toHtml())) || (item->answers() != SQAnswersEdit->answers()) ||
+            (item->compareAnswers() != SQAnswersEdit->compareAnswers()) || (item->selectionType() != SQAnswersEdit->selectionType()) ||
+            (item->explanation() != removeLineBreaks(SQExplanationLineEdit->text())) || item->isHidden() != actionHide->isChecked())
+    {
+        switch (QMessageBox::information(this, tr("iTestServer"), tr("Are you sure you want to change the question?"), tr("&Change"), tr("Do &not change"), 0, 1)) {
+            case 1: // Do not change
+                return;
+        }
+    }
+    else
+        return;
+
+    // CHECK GROUP
+
     if (!q_group.isEmpty()) {
         QMapIterator<QListWidgetItem *, QuestionItem *> q(current_db_questions);
         while (q.hasNext()) { q.next();
@@ -224,7 +259,6 @@ void MainWindow::applyQuestionChanges()
         }
     }*/
     // CHECK NAME
-    QString q_name = removeLineBreaks(SQQuestionNameLineEdit->text());
     if (current_db_question != q_name) {
         int n = 0;
         QMapIterator<QListWidgetItem *, QuestionItem *> q(current_db_questions);
@@ -261,6 +295,7 @@ void MainWindow::applyQuestionChanges()
             }
         }
     }
+
     // SAVE VALUES
     item->setName(q_name);
     item->setGroup(q_group);

@@ -2734,6 +2734,10 @@ Error %2.</source>
         <source>%1 &gt; Client #%2 (%3) connected</source>
         <translation>%1 &gt; Cliente #%2 (%3) conectado</translation>
     </message>
+    <message>
+        <source>Are you sure you want to change the question?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrintQuestionsDialogue</name>

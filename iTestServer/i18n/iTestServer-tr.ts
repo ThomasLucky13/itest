@@ -2737,6 +2737,10 @@ Hata: %2.</translation>
         <source>%1 &gt; Client #%2 (%3) connected</source>
         <translation>%1 &gt; İstemci #%2 (%3) bağlı</translation>
     </message>
+    <message>
+        <source>Are you sure you want to change the question?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrintQuestionsDialogue</name>

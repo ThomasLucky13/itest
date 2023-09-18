@@ -2100,6 +2100,10 @@ Please choose a different group.</source>
 Выберете другую группу.</translation>
     </message>
     <message>
+        <source>Are you sure you want to change the question?</source>
+        <translation>Сохранить изменения в вопросе?</translation>
+    </message>
+    <message>
         <source>iTestServer</source>
         <translation>iTestServer</translation>
     </message>

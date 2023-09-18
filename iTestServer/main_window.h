@@ -129,11 +129,13 @@ private slots:
     void clearCLSC();
     void clearCLSS();
     // QUESTION-RELATED
+    void changedCurrentQuestion();
     void setCurrentQuestion();
     void addQuestion();
     void deleteQuestion();
     void duplicateQuestion();
     void applyQuestionChanges();
+    void applyQuestionChanges(QListWidgetItem *);
     void discardQuestionChanges();
     static void setQuestionItemColour(QListWidgetItem *, int);
     static void setQuestionItemIcon(QListWidgetItem *, int);
@@ -322,6 +324,8 @@ private:
 
     QString docs_url;
     QMap<QString, QString> itest_i18n;
+
+     QListWidgetItem *current_question_widgetItem;
     // EXCEPTIONS
     class xInvalidDBFile {
     public:

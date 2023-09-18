@@ -362,7 +362,7 @@ MainWindow::MainWindow()
     QObject::connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
 
     QObject::connect(recentDBsListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(openRecent(QListWidgetItem *)));
-    QObject::connect(LQListWidget, SIGNAL(currentTextChanged(QString)), this, SLOT(setCurrentQuestion()));
+    QObject::connect(LQListWidget, SIGNAL(currentTextChanged(QString)), this, SLOT(changedCurrentQuestion()));
 
     QObject::connect(actionFrom_A_to_Z, SIGNAL(triggered()), this, SLOT(sortQuestionsAscending()));
     QObject::connect(actionFrom_Z_to_A, SIGNAL(triggered()), this, SLOT(sortQuestionsDescending()));
@@ -431,6 +431,7 @@ MainWindow::MainWindow()
     QObject::connect(actionChange_language, SIGNAL(triggered()), this, SLOT(changeLanguage()));
 
     QObject::connect(mainStackedWidget, SIGNAL(currentChanged(int)), this, SLOT(currentPageChanged(int)));
+
     // Disable all -------------------------------------------------------------
     setAllEnabled(false);
     // Categories -------------------------------------------------------------------

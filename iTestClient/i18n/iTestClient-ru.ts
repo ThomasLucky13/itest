@@ -46,6 +46,10 @@
         <source>Enter your answer:</source>
         <translation>Введите свой ответ:</translation>
     </message>
+    <message>
+        <source>Reset answer</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
