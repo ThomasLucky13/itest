@@ -77,6 +77,7 @@ QWidget(parent) {
     ae_singleselection = new QRadioButton(tr("Single choice"), this);
     ae_singleselection->setStatusTip(tr("Single choice questions allow selecting one answer only, even if the question has more correct answers"));
     ae_singleselection->setChecked(true);
+    ae_singleselection->setIcon(QIcon(":/images/images/SingleSelection.svg"));
     hlayout->addWidget(ae_singleselection);
     connect(ae_singleselection, SIGNAL(toggled(bool)), this, SLOT(setSingleSelectionView(bool)));
 #ifdef Q_OS_MAC
@@ -86,14 +87,17 @@ QWidget(parent) {
 #endif
     ae_multiselection = new QRadioButton(tr("Multiple choice"), this);
     ae_multiselection->setStatusTip(tr("Multiple choice questions allow selecting more answers"));
+    ae_multiselection->setIcon(QIcon(":/images/images/MultiSelection.svg"));
     hlayout->addWidget(ae_multiselection);
     connect(ae_multiselection, SIGNAL(toggled(bool)), this, SLOT(setMultiSelectionView(bool)));
     ae_openquestion = new QRadioButton(tr("Open question"), this);
     ae_openquestion->setStatusTip(tr("Open questions allow enter the answer manually"));
+    ae_openquestion->setIcon(QIcon(":/images/images/OpenQuestion.svg"));
     hlayout->addWidget(ae_openquestion);
     connect(ae_openquestion, SIGNAL(toggled(bool)), this, SLOT(setOpenQuestionView(bool)));
     ae_comparison = new QRadioButton(tr("Comparison"), this);
     ae_comparison->setStatusTip(tr("Comparison allow match words in pairs"));
+    ae_comparison->setIcon(QIcon(":/images/images/Comparison.svg"));
     hlayout->addWidget(ae_comparison);
     connect(ae_comparison, SIGNAL(toggled(bool)), this, SLOT(setComparisonView(bool)));
 #ifdef Q_OS_MAC

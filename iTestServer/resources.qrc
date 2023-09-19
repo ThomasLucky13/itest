@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/images" >
+    <qresource prefix="/images">
         <file>images/attachment.png</file>
         <file>images/back.png</file>
         <file>images/bottom.png</file>
@@ -60,5 +60,9 @@
         <file>images/student-remove32.png</file>
         <file>images/top.png</file>
         <file>images/up.png</file>
+        <file>images/SingleSelection.svg</file>
+        <file>images/OpenQuestion.svg</file>
+        <file>images/MultiSelection.svg</file>
+        <file>images/Comparison.svg</file>
     </qresource>
 </RCC>
