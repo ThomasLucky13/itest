@@ -240,7 +240,7 @@ void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
             (item->text() !=removeLineBreaks(SQQuestionTextEdit->toHtml())) || (item->answers() != SQAnswersEdit->answers()) ||
             (item->compareAnswers() != SQAnswersEdit->compareAnswers()) || (item->selectionType() != SQAnswersEdit->selectionType()) ||
             (item->explanation() != removeLineBreaks(SQExplanationLineEdit->text())) || item->isHidden() != actionHide->isChecked() ||
-            item->correctAnswers() != SQAnswersEdit->correctAnswers())
+            (((item->selectionType()==Question::SingleSelection) || (item->selectionType() == Question::MultiSelection))&&(item->correctAnswers() != SQAnswersEdit->correctAnswers())))
     {
         switch (QMessageBox::information(this, tr("iTestServer"), tr("Are you sure you want to change the question?"), tr("&Change"), tr("Do &not change"), 0, 1)) {
             case 1: // Do not change
