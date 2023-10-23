@@ -136,6 +136,7 @@ private slots:
     void duplicateQuestion();
     void applyQuestionChanges();
     void applyQuestionChanges(QListWidgetItem *);
+    bool checkEmptyCorrectAnswers(Question::Answers answers, int ans_count);
     void discardQuestionChanges();
     static void setQuestionItemColour(QListWidgetItem *, int);
     static void setQuestionItemIcon(QListWidgetItem *, int);
@@ -326,6 +327,9 @@ private:
     QMap<QString, QString> itest_i18n;
 
      QListWidgetItem *current_question_widgetItem;
+     int current_question_Row;
+     bool changeQuestionEnabled;
+     bool isOtherQuestionChoosed;
     // EXCEPTIONS
     class xInvalidDBFile {
     public:

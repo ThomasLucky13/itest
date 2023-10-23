@@ -153,12 +153,26 @@ void MainWindow::duplicateQuestion()
 
 void MainWindow::changedCurrentQuestion()
 {
+    isOtherQuestionChoosed = true;
+    if (!changeQuestionEnabled)
+    {
+        changeQuestionEnabled = true;
+        return;
+    }
     if (actionApply->isEnabled())
     {
         applyQuestionChanges(current_question_widgetItem);
     }
-    current_question_widgetItem = LQListWidget->currentItem();
-    setCurrentQuestion();
+    if (changeQuestionEnabled)
+    {
+        current_question_widgetItem = LQListWidget->currentItem();
+        current_question_Row = LQListWidget->currentRow();
+        setCurrentQuestion();
+    } else
+    {
+        LQListWidget->setCurrentItem(current_question_widgetItem);
+    }
+    isOtherQuestionChoosed = false;
 }
 void MainWindow::setCurrentQuestion()
 {
@@ -187,6 +201,7 @@ void MainWindow::setCurrentQuestion()
             SQStatisticsLabel->setText(tr("Statistics: number of <b>correct</b> answers: <b>%1</b>; number of <b>incorrect</b> answers: <b>%2</b>; difficulty: <b>%3</b>; <a href=\"adjust.difficulty\">adjust difficulty</a>").arg(item->correctAnsCount()).arg(item->incorrectAnsCount()).arg(dif));
             SQStatisticsLabel->setVisible(true);
         }
+        SQSaveErrorLabel->setVisible(false);
         actionHide->setChecked(item->isHidden());
         for (int i = 0; i < item->numSvgItems(); ++i) {
             SQSVGListWidget->addItem(new SvgItem(item->svgItem(i)->text(), item->svgItem(i)->svg()));
@@ -224,7 +239,8 @@ void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
             (item->category() != q_category && item->category() != -1)||(item->difficulty() != SQDifficultyComboBox->currentIndex()) ||
             (item->text() !=removeLineBreaks(SQQuestionTextEdit->toHtml())) || (item->answers() != SQAnswersEdit->answers()) ||
             (item->compareAnswers() != SQAnswersEdit->compareAnswers()) || (item->selectionType() != SQAnswersEdit->selectionType()) ||
-            (item->explanation() != removeLineBreaks(SQExplanationLineEdit->text())) || item->isHidden() != actionHide->isChecked())
+            (item->explanation() != removeLineBreaks(SQExplanationLineEdit->text())) || item->isHidden() != actionHide->isChecked() ||
+            item->correctAnswers() != SQAnswersEdit->correctAnswers())
     {
         switch (QMessageBox::information(this, tr("iTestServer"), tr("Are you sure you want to change the question?"), tr("&Change"), tr("Do &not change"), 0, 1)) {
             case 1: // Do not change
@@ -233,6 +249,16 @@ void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
     }
     else
         return;
+
+    //Check that correct answers was choosed in Single Selection Type
+    if ((SQAnswersEdit->selectionType() == Question::SingleSelection) && checkEmptyCorrectAnswers(SQAnswersEdit->correctAnswers(), SQAnswersEdit->answers().count()))
+    {
+        if (isOtherQuestionChoosed)
+            changeQuestionEnabled = false;
+        SQSaveErrorLabel->setVisible(true);
+        SQSaveErrorLabel->setText(tr("Save Error: The correct answer is not specified"));
+        return;
+    }
 
     // CHECK GROUP
 
@@ -325,6 +351,16 @@ void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
     hideQuestion(q_item, item);
     statusBar()->showMessage(tr("Data saved"), 10000);
     setDatabaseModified();
+}
+
+bool MainWindow::checkEmptyCorrectAnswers(Question::Answers answers, int ans_count)
+{
+    for (int i = 0; i < ans_count; ++i)
+    {
+        if (answers.testFlag(Question::indexToAnswer(i + 1)) == true)
+            return false;
+    }
+    return true;
 }
 
 void MainWindow::discardQuestionChanges()

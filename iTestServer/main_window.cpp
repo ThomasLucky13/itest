@@ -290,6 +290,7 @@ MainWindow::MainWindow()
     progressBar->setVisible(false);
     LQCategoryComboBox->setVisible(false);
     SQStatisticsLabel->setVisible(false);
+    SQSaveErrorLabel->setVisible(false);
     currentSvgChanged();
     btnApply = SQButtonBox->button(QDialogButtonBox::Apply);
     btnApply->setText(tr("Apply"));
@@ -431,6 +432,8 @@ MainWindow::MainWindow()
     QObject::connect(actionChange_language, SIGNAL(triggered()), this, SLOT(changeLanguage()));
 
     QObject::connect(mainStackedWidget, SIGNAL(currentChanged(int)), this, SLOT(currentPageChanged(int)));
+
+    changeQuestionEnabled = true;
 
     // Disable all -------------------------------------------------------------
     setAllEnabled(false);
