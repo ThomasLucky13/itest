@@ -223,6 +223,8 @@ void MainWindow::applyQuestionChanges()
 void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
 {
     QuestionItem *item = current_db_questions.value(q_item);
+    if (!item)
+        return;
 
     QString q_group = removeLineBreaks(SQGroupLineEdit->text());
 
