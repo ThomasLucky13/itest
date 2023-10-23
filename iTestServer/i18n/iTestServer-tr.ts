@@ -2741,6 +2741,14 @@ Hata: %2.</translation>
         <source>Are you sure you want to change the question?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Save error Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Error: The correct answer is not specified</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrintQuestionsDialogue</name>

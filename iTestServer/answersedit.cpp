@@ -123,6 +123,8 @@ QWidget(parent) {
     vlayout_ans1->setContentsMargins(0, 0, 0, 0); vlayout_ans1->setSpacing(6);
     QVBoxLayout *vlayout_ans2 = new QVBoxLayout;
     vlayout_ans2->setContentsMargins(0, 0, 0, 0); vlayout_ans2->setSpacing(6);
+
+    checkButtonGroup = new QButtonGroup();
     for (int i = 0; i < 9; ++i) {
         AnswerEdit *ans = new AnswerEdit(i, this);
         AnswerEdit *ans_2 = new AnswerEdit(i, this);
@@ -137,7 +139,9 @@ QWidget(parent) {
         ae_compare_answers << ans_2;
         vlayout_ans1->addWidget(ans);
         vlayout_ans2->addWidget(ans_2);
+        checkButtonGroup->addButton(ans->ans_correct, i);
     }
+
     QHBoxLayout *hlayout_ans = new QHBoxLayout;
     hlayout_ans->addLayout(vlayout_ans1);
     hlayout_ans->addLayout(vlayout_ans2);
@@ -258,12 +262,18 @@ QString AnswersEdit::answer(int i)
 
 void AnswersEdit::setSingleSelectionView(bool check)
 {
+    foreach (QAbstractButton* button, checkButtonGroup->buttons()) {
+       checkButtonGroup->removeButton(button);
+    }
     if (check)
     {
         ae_correct_label->setVisible(true);
         ae_openanswer_label->setVisible(false);
         for (int i = 0; i < 9; ++i)
+        {
             ae_answers.at(i)->ans_correct->setVisible(true);
+            checkButtonGroup->addButton(ae_answers.at(i)->ans_correct, i);
+        }
         for (int i = 0; i < 9; ++i)
             ae_compare_answers.at(i)->setVisible(false);
     }

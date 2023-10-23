@@ -21,6 +21,7 @@
 #define ANSWERSEDIT_H
 
 #include <QWidget>
+#include <QButtonGroup>
 
 #include "mttoolbutton.h"
 #include "question_item.h"
@@ -100,6 +101,8 @@ private:
     QLabel *ae_answers_label;
     QLabel *ae_correct_label;
     QLabel *ae_openanswer_label;
+
+    QButtonGroup* checkButtonGroup;
 
 };
 

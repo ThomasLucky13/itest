@@ -2746,6 +2746,10 @@ Error %2.</source>
         <source>%1 &gt; Client #%2 (%3) connected</source>
         <translation>%1 &gt; Подключён клиент №%2 (%3)</translation>
     </message>
+    <message>
+        <source>Save error Info</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrintQuestionsDialogue</name>
