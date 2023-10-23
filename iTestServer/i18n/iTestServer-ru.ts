@@ -1775,6 +1775,10 @@ Please choose a different name:</source>
         <translation>Статистика: количество &lt;b&gt;правильных&lt;/b&gt; ответов: &lt;b&gt;%1&lt;/b&gt;; количество &lt;b&gt;неправильных&lt;/b&gt; ответов: &lt;b&gt;%2&lt;/b&gt;; сложность: &lt;b&gt;%3&lt;/b&gt;; &lt;a href=&quot;adjust.difficulty&quot;&gt;настроить сложность&lt;/a&gt;</translation>
     </message>
     <message>
+        <source>Save Error: The correct answer is not specified</source>
+        <translation>Ошибка сохранения: Не укзан верный ответ</translation>
+    </message>
+    <message>
         <source>Apply changes</source>
         <translation>Применить изменения</translation>
     </message>
