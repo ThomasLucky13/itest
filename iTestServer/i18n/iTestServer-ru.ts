@@ -1779,6 +1779,10 @@ Please choose a different name:</source>
         <translation>Ошибка сохранения: Не укзан верный ответ</translation>
     </message>
     <message>
+        <source>Save Error: Empty answer</source>
+        <translation>Ошибка сохранения: Пустой ответ</translation>
+    </message>
+    <message>
         <source>Apply changes</source>
         <translation>Применить изменения</translation>
     </message>

@@ -252,13 +252,33 @@ void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
     else
         return;
 
-    //Check that correct answers was choosed in Single Selection Type
+    //Check that correct answer was choosed in Single Selection Type
     if ((SQAnswersEdit->selectionType() == Question::SingleSelection) && checkEmptyCorrectAnswers(SQAnswersEdit->correctAnswers(), SQAnswersEdit->answers().count()))
     {
         if (isOtherQuestionChoosed)
             changeQuestionEnabled = false;
         SQSaveErrorLabel->setVisible(true);
         SQSaveErrorLabel->setText(tr("Save Error: The correct answer is not specified"));
+        return;
+    }
+
+    //Check that answers were inserted
+    if (!checkAllAnswersWereInserted(SQAnswersEdit->answers(), SQAnswersEdit->count()))
+    {
+        if (isOtherQuestionChoosed)
+            changeQuestionEnabled = false;
+        SQSaveErrorLabel->setVisible(true);
+        SQSaveErrorLabel->setText(tr("Save Error: Empty answer"));
+        return;
+    }
+
+    //Check that compare answers were inserted
+    if((SQAnswersEdit->selectionType() == Question::Comparison) && !checkAllAnswersWereInserted(SQAnswersEdit->compareAnswers(), SQAnswersEdit->count()))
+    {
+        if (isOtherQuestionChoosed)
+            changeQuestionEnabled = false;
+        SQSaveErrorLabel->setVisible(true);
+        SQSaveErrorLabel->setText(tr("Save Error: Void answers"));
         return;
     }
 
@@ -353,6 +373,7 @@ void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
     hideQuestion(q_item, item);
     statusBar()->showMessage(tr("Data saved"), 10000);
     setDatabaseModified();
+    SQSaveErrorLabel->setVisible(false);
 }
 
 bool MainWindow::checkEmptyCorrectAnswers(Question::Answers answers, int ans_count)
@@ -362,6 +383,14 @@ bool MainWindow::checkEmptyCorrectAnswers(Question::Answers answers, int ans_cou
         if (answers.testFlag(Question::indexToAnswer(i + 1)) == true)
             return false;
     }
+    return true;
+}
+
+bool MainWindow::checkAllAnswersWereInserted(QList<QString> answers, int ans_count)
+{
+    for (int i = 0; i < ans_count; ++i)
+         if (answers[i].isEmpty())
+             return false;
     return true;
 }
 

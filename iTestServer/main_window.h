@@ -137,6 +137,7 @@ private slots:
     void applyQuestionChanges();
     void applyQuestionChanges(QListWidgetItem *);
     bool checkEmptyCorrectAnswers(Question::Answers answers, int ans_count);
+    bool checkAllAnswersWereInserted(QList<QString> answers, int ans_count);
     void discardQuestionChanges();
     static void setQuestionItemColour(QListWidgetItem *, int);
     static void setQuestionItemIcon(QListWidgetItem *, int);
