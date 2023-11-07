@@ -236,13 +236,18 @@ void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
         q_category = -1;
     }
 
+    QList <SvgItem*> newSvgItems;
+    for (int i = 0; i < SQSVGListWidget->count(); ++i)
+        newSvgItems.push_back((SvgItem *)SQSVGListWidget->item(i));
+
     // CHECK IF SOMETHIG CHANGED
     if (    (item->name() != q_name) || (item->group() != q_group) ||
             (item->category() != q_category && item->category() != -1)||(item->difficulty() != SQDifficultyComboBox->currentIndex()) ||
             (item->text() !=removeLineBreaks(SQQuestionTextEdit->toHtml())) || (item->answers() != SQAnswersEdit->answers()) ||
             (item->compareAnswers() != SQAnswersEdit->compareAnswers()) || (item->selectionType() != SQAnswersEdit->selectionType()) ||
             (item->explanation() != removeLineBreaks(SQExplanationLineEdit->text())) || item->isHidden() != actionHide->isChecked() ||
-            (((item->selectionType()==Question::SingleSelection) || (item->selectionType() == Question::MultiSelection))&&(item->correctAnswers() != SQAnswersEdit->correctAnswers())))
+            (((item->selectionType()==Question::SingleSelection) || (item->selectionType() == Question::MultiSelection))&&(item->correctAnswers() != SQAnswersEdit->correctAnswers())) ||
+            (checkSVGItemWasChanges(item->svgItems(), newSvgItems)))
     {
         switch (QMessageBox::information(this, tr("iTestServer"), tr("Are you sure you want to change the question?"), tr("&Change"), tr("Do &not change"), 0, 1)) {
             case 1: // Do not change
@@ -392,6 +397,14 @@ bool MainWindow::checkAllAnswersWereInserted(QList<QString> answers, int ans_cou
          if (answers[i].isEmpty())
              return false;
     return true;
+}
+
+bool MainWindow::checkSVGItemWasChanges(QList<SvgItem*> questionSVG, QList<SvgItem*> newSVG)
+{
+    if (questionSVG.count() != newSVG.count()) return true;
+    for (int i = 0; i < questionSVG.count(); ++i)
+        if (questionSVG[i]->svg() != newSVG[i]->svg()) return true;
+    return false;
 }
 
 void MainWindow::discardQuestionChanges()

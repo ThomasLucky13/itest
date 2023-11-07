@@ -54,6 +54,7 @@ public slots:
     static ScoringSystem scoringSystem();
     static void setScoringSystem(const ScoringSystem &);
     bool isAnswered();
+    QString compText;
 
 private:
     QList<int> q_ans_order;

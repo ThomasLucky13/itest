@@ -87,6 +87,7 @@ MainWindow::MainWindow()
     QObject::connect(answersView, SIGNAL(buttonReleased(Question::Answers)), this, SLOT(setQuestionAnswered(Question::Answers)));
     QObject::connect(answersView, SIGNAL(inputReleased(QString)), this, SLOT(setQuestionAnswered(QString)));
     QObject::connect(answersView, SIGNAL(pairMatch(int, int, bool)), this, SLOT(setQuestionAnswered(int, int, bool)));
+    QObject::connect(answersView, SIGNAL(compareTextChanged(QString)), this, SLOT(setCompText(QString)));
     QObject::connect(answersView, SIGNAL(resetAnswers()), this, SLOT(resetQuestionAnswered()));
 
     for (int i = 0; i < 8; ++i) {
@@ -219,12 +220,22 @@ void MainWindow::setQuestionAnswered(int a1, int a2, bool isAll)
     progressBar->setValue(progress);
 }
 
+void MainWindow::setCompText(QString newText)
+{
+    if (!LQListWidget->currentIndex().isValid())
+        return;
+    QuestionItem *item = current_test_questions.value(LQListWidget->currentItem());
+   item->compText = newText;
+   qWarning() << "NewTrext = " << newText;
+}
+
 void MainWindow::resetQuestionAnswered()
 {
     if (!LQListWidget->currentIndex().isValid())
         return;
     QuestionItem *item = current_test_questions.value(LQListWidget->currentItem());
     item->setAnswered(QMap<int, int>(), false);
+    item->compText = "";
     LQListWidget->currentItem()->setBackground(QBrush(QColor(255, 255, 255)));
     LQListWidget->currentItem()->setForeground(QBrush(QColor(0, 0, 0)));
     int progress = 0;
@@ -244,7 +255,7 @@ void MainWindow::setCurrentQuestion()
         answersView->setEnabled(true);
         QuestionItem *item = current_test_questions.value(LQListWidget->currentItem());
         questionTextBrowser->setHtml(item->text());
-        answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder(), item->str_answered(), item->compareAnswers(), item->comp_answered(), item->compAnswerOrder());
+        answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder(), item->str_answered(), item->compareAnswers(), item->comp_answered(), item->compAnswerOrder(), item->compText);
         svgDisplayWidget->clear();
         if (item->numSvgItems() > 0) {
             svgDisplayWidget->setVisible(true);

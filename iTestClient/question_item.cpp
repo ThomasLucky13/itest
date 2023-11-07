@@ -34,6 +34,7 @@ QuestionItem::QuestionItem(const QString &name)
          q_comp_ans_order << i;
      }
      allCompAnswered = false;
+     compText = "";
 }
 
 void QuestionItem::shuffleAnswers()
