@@ -21,6 +21,7 @@
 #define SVG_ITEM_H
 
 #include <QListWidgetItem>
+#include <QByteArray>
 
 class SvgItem : public QListWidgetItem
 {
@@ -40,6 +41,27 @@ public slots:
 private:
     QString si_svg;
     bool si_valid;
+};
+
+class ImageItem : public QListWidgetItem
+{
+public:
+    ImageItem();
+    ImageItem(const QString &);
+    ImageItem(const QString &, const QString &);
+
+public slots:
+    bool setImage(QString);
+    bool setImage(QByteArray);
+    QString image();
+    void setText(QString str) {
+        QListWidgetItem::setText(str.remove("\n"));
+    }
+    bool isValid();
+
+private:
+    QString ii_image;
+    bool ii_valid;
 };
 
 #endif // SVG_ITEM_H

@@ -581,11 +581,22 @@ void MainWindow::startServer()
             out.device()->seek(0);
             out << (quint64)(ba.size() - sizeof(quint64));
             current_db_test << ba;
-            for (int s = 0; s < item->numSvgItems(); ++s) {
+            for (int s = 0; s < item->numImageItems(); ++s) {
                 ba.clear();
                 out << (quint64)0;
-                out << item->svgItem(s)->text() << QString("\n");
-                out << item->svgItem(s)->svg() << QString("\n");
+                out << item->imageItem(s)->text() << QString("\n");
+                SvgItem* svg = dynamic_cast<SvgItem*>(item->imageItem(s));
+                if (svg)
+                {
+                    out << QString("svg\n");
+                    out << svg->svg() << QString("\n");
+                }
+                ImageItem* image = dynamic_cast<ImageItem*>(item->imageItem(s));
+                if (image)
+                {
+                    out << QString("image\n");
+                    out << image->image() << QString("\n");
+                }
                 out.device()->seek(0);
                 out << (quint64)(ba.size() - sizeof(quint64));
                 current_db_test << ba;

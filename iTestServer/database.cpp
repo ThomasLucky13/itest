@@ -472,8 +472,15 @@ void MainWindow::openDB(const QString &openDBName, bool useCP1250)
                 if (rfile.readLine() != "[Q_SVG]") { throw xInvalidDBFile(140); }
                 int numsvgitems = rfile.readLine().toInt();
                 for (int g = 0; g < numsvgitems; ++g) {
+                    QString imagetext = rfile.readLine();
                     db_buffer = rfile.readLine();
-                    item->addSvgItem(new SvgItem(db_buffer, rfile.readLine()));
+                    if (db_buffer == "svg")
+                    {
+                        item->addImageItem(new SvgItem(imagetext, rfile.readLine()));
+                    } else
+                    {
+                        item->addImageItem(new ImageItem(imagetext, rfile.readLine()));
+                    }
                 }
             }
             // End

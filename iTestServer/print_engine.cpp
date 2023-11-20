@@ -1236,44 +1236,58 @@ QString MainWindow::htmlForQuestion(QuestionItem *item, int n, QTextDocument &do
         QTextDocument doc; doc.setHtml(item->text());
         out << "<br>" << Qt::escape(doc.toPlainText()) << endl;
     }
-    if (!test && !print_graphics && item->numSvgItems()) {
+    if (!test && !print_graphics && item->numImageItems()) {
         out << "<table border=\"0\" width=\"100%\">" << endl;
         out << "<tr><td width=\"40%\"><div class=\"bold_text\">" << endl;
         out << tr("Attachments (SVG):") << "</div></td><td><div class=\"default_text\">" << endl;
         QStringList attachments;
-        for (int i = 0; i < item->numSvgItems(); ++i) {
-            attachments << Qt::escape(item->svgItem(i)->text());
+        for (int i = 0; i < item->numImageItems(); ++i) {
+            attachments << Qt::escape(item->imageItem(i)->text());
         }
         out << attachments.join("<b>; </b>");
         out << "</div></td></tr>" << endl;
         out << "</table>" << endl;
     }
-    if (print_graphics && item->numSvgItems()) {
+    if (print_graphics && item->numImageItems()) {
         out << "<table border=\"0\" width=\"100%\"><tr>" << endl;
-        for (int i = 0; i < item->numSvgItems(); ++i) {
-            QSvgRenderer svgrenderer(item->svgItem(i)->svg().toUtf8());
-            if (!svgrenderer.isValid()) {
-                out << "<td></td>" << endl;
-                continue;
+        for (int i = 0; i < item->numImageItems(); ++i) {
+            QPixmap pixmap;
+            SvgItem* svg = dynamic_cast<SvgItem*>(item->imageItem(i));
+            if (svg)
+            {
+                QSvgRenderer svgrenderer(svg->svg().toUtf8());
+                if (!svgrenderer.isValid()) {
+                    out << "<td></td>" << endl;
+                    continue;
+                }
+                QSize svg_size = svgrenderer.defaultSize();
+                svg_size.scale(128, 128, Qt::KeepAspectRatio);
+                pixmap = QPixmap(svg_size);
+                QPainter painter(&pixmap);
+                painter.save();
+                painter.setPen(Qt::NoPen);
+                painter.setBrush(QColor(Qt::white));
+                painter.drawRect(QRect(0, 0, svg_size.width(), svg_size.height()));
+                painter.restore();
+                svgrenderer.render(&painter);
             }
-            QSize svg_size = svgrenderer.defaultSize();
-            svg_size.scale(128, 128, Qt::KeepAspectRatio);
-            QPixmap pixmap(svg_size);
-            QPainter painter(&pixmap);
-            painter.save();
-            painter.setPen(Qt::NoPen);
-            painter.setBrush(QColor(Qt::white));
-            painter.drawRect(QRect(0, 0, svg_size.width(), svg_size.height()));
-            painter.restore();
-            svgrenderer.render(&painter);
+            ImageItem* image = dynamic_cast<ImageItem*>(item->imageItem(i));
+            if (image)
+            {
+                pixmap = QPixmap(image->image());
+                if (pixmap.isNull()) {
+                    out << "<td></td>" << endl;
+                    continue;
+                }
+            }
             QUrl resource_url(QString("%1-%2-%3.qpixmap").arg(item->name()).arg(i).arg(QRandomGenerator::global()->generate()));
             doc.addResource(QTextDocument::ImageResource, resource_url, pixmap);
             out << "<td align=\"center\"><img src=\"" << resource_url.toString(QUrl::None) << "\"></td>" << endl;
         }
         out << "</tr><tr>" << endl;
-        for (int i = 0; i < item->numSvgItems(); ++i) {
+        for (int i = 0; i < item->numImageItems(); ++i) {
             out << "<td align=\"center\"><div class=\"default_text\">";
-            out << Qt::escape(item->svgItem(i)->text()) << "</div></td>" << endl;
+            out << Qt::escape(item->imageItem(i)->text()) << "</div></td>" << endl;
         }
         out << "</tr></table>" << endl;
     }

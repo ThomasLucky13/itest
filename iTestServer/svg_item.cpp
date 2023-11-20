@@ -21,6 +21,7 @@
 
 #include <QPainter>
 #include <QSvgRenderer>
+#include <QBuffer>
 
 SvgItem::SvgItem():
 QListWidgetItem(0, QListWidgetItem::UserType)
@@ -59,3 +60,47 @@ bool SvgItem::setSvg(QString svg)
 QString SvgItem::svg() { return si_svg; }
 
 bool SvgItem::isValid() { return si_valid; }
+
+
+
+ImageItem::ImageItem():
+QListWidgetItem(0, QListWidgetItem::UserType)
+{ ii_valid = false; }
+
+ImageItem::ImageItem(const QString &text):
+QListWidgetItem(0, QListWidgetItem::UserType)
+{ ii_valid = false; setText(text); }
+
+ImageItem::ImageItem(const QString &text, const QString &image):
+QListWidgetItem(0, QListWidgetItem::UserType)
+{ ii_valid = false; setText(text); setImage(image); }
+
+bool ImageItem::setImage(QString image)
+{
+    QByteArray rawImage;
+    rawImage.append(image);
+    QPixmap pixmap;
+    if (!pixmap.loadFromData(rawImage.toBase64(), "PNG"))
+        return false;
+    else ii_valid = true;
+    setIcon(QIcon(pixmap));
+
+    ii_image = image;
+    return true;
+}
+
+bool ImageItem::setImage(QByteArray rawImage)
+{
+    QPixmap pixmap;
+    if (!pixmap.loadFromData(rawImage.data(), "PNG"))
+        return false;
+    else ii_valid = true;
+    setIcon(QIcon(pixmap));
+
+    //ii_image = image;
+    return true;
+}
+
+QString ImageItem::image() { return ii_image; }
+
+bool ImageItem::isValid() { return ii_valid; }

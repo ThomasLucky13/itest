@@ -26,6 +26,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QBuffer>
 
 void MainWindow::addQuestion()
 {
@@ -136,7 +137,7 @@ void MainWindow::duplicateQuestion()
                                                       item->incorrectAnsCount(),
                                                       item->correctAnsCount(),
                                                       item->isHidden(),
-                                                      item->svgItems(), true);
+                                                      item->imagesItems(), true);
             QListWidgetItem *new_q_item = new QListWidgetItem(new_item->group().isEmpty() ? new_q_name : QString("[%1] %2").arg(new_item->group()).arg(new_q_name));
             current_db_questions.insert(new_q_item, new_item);
             setQuestionItemIcon(new_q_item, new_item->difficulty());
@@ -203,8 +204,17 @@ void MainWindow::setCurrentQuestion()
         }
         SQSaveErrorLabel->setVisible(false);
         actionHide->setChecked(item->isHidden());
-        for (int i = 0; i < item->numSvgItems(); ++i) {
-            SQSVGListWidget->addItem(new SvgItem(item->svgItem(i)->text(), item->svgItem(i)->svg()));
+        for (int i = 0; i < item->numImageItems(); ++i) {
+            SvgItem* svg = dynamic_cast<SvgItem*>(item->imageItem(i));
+            if (svg)
+            {
+                SQSVGListWidget->addItem(new SvgItem(svg->text(), svg->svg()));
+            }
+            ImageItem* image = dynamic_cast<ImageItem*>(item->imageItem(i));
+            if (image)
+            {
+                SQSVGListWidget->addItem(new ImageItem(image->text(), image->image()));
+            }
         }
         current_db_question = item->name();
     } else {
@@ -236,9 +246,9 @@ void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
         q_category = -1;
     }
 
-    QList <SvgItem*> newSvgItems;
+    QList <QListWidgetItem*> newImagesItems;
     for (int i = 0; i < SQSVGListWidget->count(); ++i)
-        newSvgItems.push_back((SvgItem *)SQSVGListWidget->item(i));
+        newImagesItems.push_back((QListWidgetItem *)SQSVGListWidget->item(i));
 
     // CHECK IF SOMETHIG CHANGED
     if (    (item->name() != q_name) || (item->group() != q_group) ||
@@ -247,7 +257,7 @@ void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
             (item->compareAnswers() != SQAnswersEdit->compareAnswers()) || (item->selectionType() != SQAnswersEdit->selectionType()) ||
             (item->explanation() != removeLineBreaks(SQExplanationLineEdit->text())) || item->isHidden() != actionHide->isChecked() ||
             (((item->selectionType()==Question::SingleSelection) || (item->selectionType() == Question::MultiSelection))&&(item->correctAnswers() != SQAnswersEdit->correctAnswers())) ||
-            (checkSVGItemWasChanges(item->svgItems(), newSvgItems)))
+            (checkImagesItemWasChanges(item->imagesItems(), newImagesItems)))
     {
         switch (QMessageBox::information(this, tr("iTestServer"), tr("Are you sure you want to change the question?"), tr("&Change"), tr("Do &not change"), 0, 1)) {
             case 1: // Do not change
@@ -362,13 +372,20 @@ void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
     item->setExplanation(removeLineBreaks(SQExplanationLineEdit->text()));
     item->setHidden(actionHide->isChecked());
     // svg
-    for (int i = 0; i < item->numSvgItems();) {
-        item->removeSvgItem(i);
+    for (int i = 0; i < item->numImageItems();) {
+        item->removeImageItem(i);
     }
-    SvgItem *svg_item;
     for (int i = 0; i < SQSVGListWidget->count(); ++i) {
-        svg_item = (SvgItem *)SQSVGListWidget->item(i);
-        item->addSvgItem(new SvgItem(svg_item->text(), svg_item->svg()));
+        SvgItem* svg = dynamic_cast<SvgItem*>(SQSVGListWidget->item(i));
+        if (svg)
+        {
+            item->addImageItem(new SvgItem(svg->text(), svg->svg()));
+        }
+        ImageItem* image = dynamic_cast<ImageItem*>(SQSVGListWidget->item(i));
+        if (image)
+        {
+            item->addImageItem(new ImageItem(image->text(), image->image()));
+        }
     }
     // APPLY
     current_db_question = q_name;
@@ -399,11 +416,30 @@ bool MainWindow::checkAllAnswersWereInserted(QList<QString> answers, int ans_cou
     return true;
 }
 
-bool MainWindow::checkSVGItemWasChanges(QList<SvgItem*> questionSVG, QList<SvgItem*> newSVG)
+bool MainWindow::checkImagesItemWasChanges(QList<QListWidgetItem*> questionImages, QList<QListWidgetItem*> newImages)
 {
-    if (questionSVG.count() != newSVG.count()) return true;
-    for (int i = 0; i < questionSVG.count(); ++i)
-        if (questionSVG[i]->svg() != newSVG[i]->svg()) return true;
+    if (questionImages.count() != newImages.count()) return true;
+    for (int i = 0; i < questionImages.count(); ++i)
+    {
+        SvgItem* svg = dynamic_cast<SvgItem*>(questionImages[i]);
+        if (svg)
+        {
+            SvgItem* svg2 = dynamic_cast<SvgItem*>(newImages[i]);
+            if (svg2)
+            {
+                if (svg->svg() != svg2->svg()) return true;
+            } else return true;
+        }
+        ImageItem* image = dynamic_cast<ImageItem*>(questionImages[i]);
+        if (image)
+        {
+            ImageItem* image2 = dynamic_cast<ImageItem*>(newImages[i]);
+            if (image2)
+            {
+                if (image->image() != image2->image()) return true;
+            } else return true;
+        }
+    }
     return false;
 }
 
@@ -729,7 +765,7 @@ void MainWindow::addSvg()
 {
     if (!LQListWidget->currentIndex().isValid())
         return;
-    QString file_name = QFileDialog::getOpenFileName(this, tr("Add SVG"), "", tr("Scalable Vector Graphics (*.svg);;All files (*.*)"));
+    QString file_name = QFileDialog::getOpenFileName(this, tr("Add SVG"), "", tr("Scalable Vector Graphics (*.svg);;Images (*.png *.jpg);;All files (*.*)"));
     if (file_name.isEmpty())
         return;
     QFile file(file_name);
@@ -742,12 +778,29 @@ void MainWindow::addSvg()
     QString svg_name = QInputDialog::getText(this, tr("Add SVG"), tr("Attachment name:"), QLineEdit::Normal, file_info.baseName(), &ok);
     if (!ok || svg_name.isEmpty())
         return;
-    QTextStream in(&file);
-    SvgItem *svg = new SvgItem(svg_name, in.readAll());
-    if (!svg->isValid()) {
-        QMessageBox::critical(this, tr("Add SVG"), tr("Unable to parse file %1.").arg(file_name));
+    if(file_name.endsWith(".svg"))
+    {
+        QTextStream in(&file);
+        SvgItem *svg = new SvgItem(svg_name, in.readAll());
+        if (!svg->isValid()) {
+            QMessageBox::critical(this, tr("Add SVG"), tr("Unable to parse file %1.").arg(file_name));
+        }
+        SQSVGListWidget->addItem(svg);
+    } else
+    {
+        QPixmap pixmap(file_name);
+        if (pixmap.isNull())
+            return;
+        QBuffer buffer;
+        buffer.open(QIODevice::WriteOnly);
+        pixmap.save(&buffer, "PNG");
+        QString encoded = buffer.data().toBase64();
+        ImageItem* image = new ImageItem(svg_name, buffer.data());
+        if (!image->isValid()) {
+            QMessageBox::critical(this, tr("Add SVG"), tr("Unable to parse file %1.").arg(file_name));
+        }
+        SQSVGListWidget->addItem(image);
     }
-    SQSVGListWidget->addItem(svg);
 }
 
 void MainWindow::removeSvg()

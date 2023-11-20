@@ -152,17 +152,20 @@ void QuestionItem::setAnswered(QMap<int, int> ans, bool isAll)
     allCompAnswered = isAll;
 }
 
-void QuestionItem::addSvgItem(const QString &name, const QString &svg)
+void QuestionItem::addImageItem(const QString &name, const QString &svg, const bool &isSvg)
 {
     q_svglist << name;
     q_svgmap.insert(name, svg);
+    q_isSvg << isSvg;
 }
 
-int QuestionItem::numSvgItems() { return q_svglist.count(); }
+int QuestionItem::numImageItems() { return q_svglist.count(); }
 
-QString QuestionItem::svgName(int i) { return q_svglist.at(i); }
+QString QuestionItem::imageName(int i) { return q_svglist.at(i); }
 
-QString QuestionItem::svg(int i) { return q_svgmap.value(q_svglist.at(i), QString()); }
+QString QuestionItem::imageData(int i) { return q_svgmap.value(q_svglist.at(i), QString()); }
+
+bool QuestionItem::imageTypeIsSvg(int i) { return q_isSvg.at(i); }
 
 ScoringSystem QuestionItem::q_scoringsystem;
 

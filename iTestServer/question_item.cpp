@@ -32,7 +32,7 @@ QuestionItem::QuestionItem(const QString &name,
                            unsigned int inccount,
                            unsigned int ccount,
                            bool hidden,
-                           QList<SvgItem *> svgs,
+                           QList<QListWidgetItem *> images,
                            bool copysvgs)
 {
     q_name = name;
@@ -48,18 +48,23 @@ QuestionItem::QuestionItem(const QString &name,
     q_correctanscount = ccount;
     q_hidden = hidden;
     if (copysvgs) {
-        for (int i = 0; i < svgs.count(); ++i) {
-            q_svgitems << new SvgItem(svgs.at(i)->text(), svgs.at(i)->svg());
+        for (int i = 0; i < images.count(); ++i) {
+            SvgItem* svg = dynamic_cast<SvgItem*>(images[i]);
+            if (svg)
+                q_imagesitems << new SvgItem(svg->text(), svg->svg());
+            ImageItem* image = dynamic_cast<ImageItem*>(images[i]);
+            if (image)
+                q_imagesitems << new ImageItem(image->text(), image->image());
         }
     } else {
-        q_svgitems = svgs;
+        q_imagesitems = images;
     }
 }
 
 QuestionItem::~QuestionItem()
 {
-    for (int i = 0; i < q_svgitems.count(); ++i) {
-        if (q_svgitems.at(i)) delete q_svgitems.at(i);
+    for (int i = 0; i < q_imagesitems.count(); ++i) {
+        if (q_imagesitems.at(i)) delete q_imagesitems.at(i);
     }
 }
 
@@ -79,17 +84,17 @@ void QuestionItem::addIncorrectAns() { q_incorrectanscount++; }
 
 void QuestionItem::addCorrectAns() { q_correctanscount++; }
 
-void QuestionItem::addSvgItem(SvgItem *svg) { q_svgitems << svg; }
+void QuestionItem::addImageItem(QListWidgetItem *image) { q_imagesitems << image; }
 
-bool QuestionItem::removeSvgItem(SvgItem *svg) { return q_svgitems.removeAll(svg) > 0; }
+bool QuestionItem::removeImageItem(QListWidgetItem *image) { return q_imagesitems.removeAll(image) > 0; }
 
-SvgItem *QuestionItem::removeSvgItem(int i) { return q_svgitems.takeAt(i); }
+QListWidgetItem *QuestionItem::removeImageItem(int i) { return q_imagesitems.takeAt(i); }
 
-int QuestionItem::numSvgItems() { return q_svgitems.count(); }
+int QuestionItem::numImageItems() { return q_imagesitems.count(); }
 
-SvgItem *QuestionItem::svgItem(int i) { return q_svgitems.at(i); }
+QListWidgetItem *QuestionItem::imageItem(int i) { return q_imagesitems.at(i); }
 
-QList<SvgItem *> QuestionItem::svgItems() { return q_svgitems; }
+QList<QListWidgetItem *> QuestionItem::imagesItems() { return q_imagesitems; }
 
 int QuestionItem::recommendedDifficulty()
 {
@@ -166,12 +171,27 @@ QString QuestionItem::allProperties(bool itdb1_3)
     out.append(q_hidden ? "true" : "false");
     // Q_SVG
     out.append("\n[Q_SVG]\n");
-    out.append(QString("%1").arg(q_svgitems.count()));
-    for (int i = 0; i < q_svgitems.count(); ++i) {
+    out.append(QString("%1").arg(q_imagesitems.count()));
+    for (int i = 0; i < q_imagesitems.count(); ++i) {
         out.append("\n");
-        out.append(q_svgitems.at(i)->text());
-        out.append("\n");
-        out.append(q_svgitems.at(i)->svg());
+        out.append(q_imagesitems.at(i)->text());
+        SvgItem* svg = dynamic_cast<SvgItem*>(q_imagesitems.at(i));
+        if (svg)
+        {
+            out.append("\n");
+            out.append("svg");
+            out.append("\n");
+            out.append(svg->svg());
+        }
+        ImageItem* image = dynamic_cast<ImageItem*>(q_imagesitems.at(i));
+        if (image)
+        {
+            out.append("\n");
+            out.append("image");
+            out.append("\n");
+            out.append(image->image());
+        }
+
     }
     return out;
 }
@@ -211,7 +231,7 @@ QString QuestionItem::allPublicProperties()
     }
     // Q_SVG
     out.append("[Q_SVG]\n");
-    out.append(QString("%1").arg(q_svgitems.count()));
+    out.append(QString("%1").arg(q_imagesitems.count()));
     return out;
 }
 

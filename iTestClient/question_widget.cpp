@@ -157,16 +157,16 @@ void QuestionWidget::init(QuestionItem *item, bool highlight_correct_answers)
             qw_lbl_answers.at(i)->setFont(font);
         }
     }
-    for (int i = 0; i < item->numSvgItems(); ++i) {
+    for (int i = 0; i < item->numImageItems(); ++i) {
         QSvgWidget *svg_widget = new QSvgWidget;
-        svg_widget->load(item->svg(i).toUtf8());
+        svg_widget->load(item->imageData(i).toUtf8());
         QSize svg_size = svg_widget->sizeHint();
         svg_size.scale(48, 48, Qt::KeepAspectRatioByExpanding);
         svg_widget->setMinimumSize(svg_size);
         svg_widget->setMaximumSize(svg_size);
-        qw_msw_svgs->addWidget(svg_widget, item->svgName(i), false);
+        qw_msw_svgs->addWidget(svg_widget, item->imageName(i), false);
     }
-    if (item->numSvgItems() < 1) {
+    if (item->numImageItems() < 1) {
         qw_msw_svgs->setVisible(false);
     }
 }

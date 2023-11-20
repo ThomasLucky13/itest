@@ -47,10 +47,11 @@ public slots:
     void setAnswered(QMap<int, int>, bool = false);
     double score();
     double maximumScore();
-    void addSvgItem(const QString &, const QString &);
-    int numSvgItems();
-    QString svgName(int);
-    QString svg(int);
+    void addImageItem(const QString &, const QString &, const bool &);
+    int numImageItems();
+    QString imageName(int);
+    QString imageData(int);
+    bool imageTypeIsSvg(int);
     static ScoringSystem scoringSystem();
     static void setScoringSystem(const ScoringSystem &);
     bool isAnswered();
@@ -64,6 +65,7 @@ private:
     QMap<int, int> q_comp_answer;
     QStringList q_svglist;
     QMap<QString, QString> q_svgmap;
+    QList<bool> q_isSvg;
     static ScoringSystem q_scoringsystem;
     bool allCompAnswered;
 };

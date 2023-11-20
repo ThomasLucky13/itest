@@ -224,8 +224,15 @@ void MainWindow::loadTest(QString input)
             if (in.readLine() != "[Q_SVG]") { errorInvalidData(); return; }
             int numsvgitems = in.readLine().toInt();
             for (int g = 0; g < numsvgitems; ++g) {
+                QString imagetext = in.readLine();
                 db_buffer = in.readLine();
-                item->addSvgItem(db_buffer, in.readLine());
+                if (db_buffer == "svg")
+                {
+                    item->addImageItem(imagetext, in.readLine(), true);
+                } else
+                {
+                    item->addImageItem(imagetext, in.readLine(), false);
+                }
             }
         }
         // End

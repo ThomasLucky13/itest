@@ -226,7 +226,6 @@ void MainWindow::setCompText(QString newText)
         return;
     QuestionItem *item = current_test_questions.value(LQListWidget->currentItem());
    item->compText = newText;
-   qWarning() << "NewTrext = " << newText;
 }
 
 void MainWindow::resetQuestionAnswered()
@@ -257,19 +256,19 @@ void MainWindow::setCurrentQuestion()
         questionTextBrowser->setHtml(item->text());
         answersView->setAnswers(item->answers(), item->answered(), item->selectionType(), item->answerOrder(), item->str_answered(), item->compareAnswers(), item->comp_answered(), item->compAnswerOrder(), item->compText);
         svgDisplayWidget->clear();
-        if (item->numSvgItems() > 0) {
+        if (item->numImageItems() > 0) {
             svgDisplayWidget->setVisible(true);
             //int h = 0;
-            for (int i = 0; i < item->numSvgItems(); ++i) {
+            for (int i = 0; i < item->numImageItems(); ++i) {
                 QSvgWidget *svg_widget = new QSvgWidget;
                 QSize minimum_size = svg_widget->sizeHint();
                 minimum_size.scale(128, 128, Qt::KeepAspectRatioByExpanding);
                 svg_widget->setMinimumSize(minimum_size);
-                svg_widget->load(item->svg(i).toUtf8());
+                svg_widget->load(item->imageData(i).toUtf8());
                 /*if (svg_widget->renderer()->defaultSize().height() + 40 > h) {
                     h = svg_widget->renderer()->defaultSize().height() + 40;
                 }*/
-                svgDisplayWidget->addWidget(svg_widget, item->svgName(i), true);
+                svgDisplayWidget->addWidget(svg_widget, item->imageName(i), true);
             }
             //if (h < 168) { h = 168; }
             qApp->processEvents();
@@ -319,7 +318,7 @@ void MainWindow::previewSvg(const QString &link)
     if (item == NULL)
         return;
     int i_link = link.toInt();
-    if (i_link < 0 || i_link >= item->numSvgItems())
+    if (i_link < 0 || i_link >= item->numImageItems())
         return;
     QSvgWidget *svg_widget = new QSvgWidget;
     svg_widget->setAttribute(Qt::WA_DeleteOnClose);
@@ -329,11 +328,11 @@ void MainWindow::previewSvg(const QString &link)
 #else
     svg_widget->setWindowFlags(Qt::Dialog | Qt::WindowMaximizeButtonHint | Qt::WindowStaysOnTopHint | Qt::WindowSystemMenuHint);
 #endif
-    svg_widget->setWindowTitle(item->svgName(i_link));
+    svg_widget->setWindowTitle(item->imageName(i_link));
     QSize minimum_size = svg_widget->sizeHint();
     minimum_size.scale(128, 128, Qt::KeepAspectRatioByExpanding);
     svg_widget->setMinimumSize(minimum_size);
-    svg_widget->load(item->svg(i_link).toUtf8());
+    svg_widget->load(item->imageData(i_link).toUtf8());
     svg_widget->show();
 }
 

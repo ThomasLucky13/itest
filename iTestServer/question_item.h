@@ -21,6 +21,7 @@
 #define QUESTION_ITEM_H
 
 #include "question.h"
+#include <QListWidgetItem>
 
 class SvgItem;
 
@@ -84,7 +85,7 @@ public:
                  unsigned int inccount = 0,
                  unsigned int ccount = 0,
                  bool hidden = false,
-                 QList<SvgItem *> svgs = QList<SvgItem *>(),
+                 QList<QListWidgetItem *> images = QList<QListWidgetItem *>(),
                  bool copysvgs = true);
     ~QuestionItem();
 
@@ -97,12 +98,12 @@ public slots:
     void setCorrectAnsCount(unsigned int);
     void addIncorrectAns();
     void addCorrectAns();
-    void addSvgItem(SvgItem *);
-    bool removeSvgItem(SvgItem *);
-    SvgItem *removeSvgItem(int);
-    int numSvgItems();
-    SvgItem *svgItem(int);
-    QList<SvgItem *> svgItems();
+    void addImageItem(QListWidgetItem *);
+    bool removeImageItem(QListWidgetItem *);
+    QListWidgetItem *removeImageItem(int);
+    int numImageItems();
+    QListWidgetItem *imageItem(int);
+    QList<QListWidgetItem *> imagesItems();
     int recommendedDifficulty();
     QString allProperties(bool = false);
     QString allPublicProperties();
@@ -111,7 +112,7 @@ private:
     unsigned int q_incorrectanscount;
     unsigned int q_correctanscount;
     bool q_hidden;
-    QList<SvgItem *> q_svgitems;
+    QList<QListWidgetItem *> q_imagesitems;
 };
 
 #endif // QUESTION_ITEM_H
