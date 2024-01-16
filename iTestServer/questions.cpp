@@ -64,6 +64,7 @@ addQuestion_start:
         item->setCategory(SQCategoryComboBox->itemData(0).toInt());
         setQuestionItemColour(q_item, item->category());
     }
+    LQListWidget->setCurrentRow(LQListWidget->count()-1);
 }
 
 void MainWindow::deleteQuestion()
@@ -150,6 +151,29 @@ void MainWindow::duplicateQuestion()
     }
 }
 
+void MainWindow::changedCurrentQuestion()
+{
+    isOtherQuestionChoosed = true;
+    if (!changeQuestionEnabled)
+    {
+        changeQuestionEnabled = true;
+        return;
+    }
+    if (actionApply->isEnabled())
+    {
+        applyQuestionChanges(current_question_widgetItem);
+    }
+    if (changeQuestionEnabled)
+    {
+        current_question_widgetItem = LQListWidget->currentItem();
+        current_question_Row = LQListWidget->currentRow();
+        setCurrentQuestion();
+    } else
+    {
+        LQListWidget->setCurrentItem(current_question_widgetItem);
+    }
+    isOtherQuestionChoosed = false;
+}
 void MainWindow::setCurrentQuestion()
 {
     if (LQListWidget->currentIndex().isValid()) {
@@ -177,6 +201,7 @@ void MainWindow::setCurrentQuestion()
             SQStatisticsLabel->setText(tr("Statistics: number of <b>correct</b> answers: <b>%1</b>; number of <b>incorrect</b> answers: <b>%2</b>; difficulty: <b>%3</b>; <a href=\"adjust.difficulty\">adjust difficulty</a>").arg(item->correctAnsCount()).arg(item->incorrectAnsCount()).arg(dif));
             SQStatisticsLabel->setVisible(true);
         }
+        SQSaveErrorLabel->setVisible(false);
         actionHide->setChecked(item->isHidden());
         for (int i = 0; i < item->numSvgItems(); ++i) {
             SQSVGListWidget->addItem(new SvgItem(item->svgItem(i)->text(), item->svgItem(i)->svg()));
@@ -192,15 +217,78 @@ void MainWindow::applyQuestionChanges()
     if (!LQListWidget->currentIndex().isValid())
         return;
     QListWidgetItem *q_item = LQListWidget->currentItem();
+    applyQuestionChanges(q_item);
+}
+
+void MainWindow::applyQuestionChanges(QListWidgetItem * q_item)
+{
     QuestionItem *item = current_db_questions.value(q_item);
-    // CHECK GROUP
+    if (!item)
+        return;
+
     QString q_group = removeLineBreaks(SQGroupLineEdit->text());
+
+    QString q_name = removeLineBreaks(SQQuestionNameLineEdit->text());
     int q_category;
     if (SQCategoryComboBox->count() != 0) {
         q_category = SQCategoryComboBox->itemData(SQCategoryComboBox->currentIndex()).toInt();
     } else {
         q_category = -1;
     }
+
+    QList <SvgItem*> newSvgItems;
+    for (int i = 0; i < SQSVGListWidget->count(); ++i)
+        newSvgItems.push_back((SvgItem *)SQSVGListWidget->item(i));
+
+    // CHECK IF SOMETHIG CHANGED
+    if (    (item->name() != q_name) || (item->group() != q_group) ||
+            (item->category() != q_category && item->category() != -1)||(item->difficulty() != SQDifficultyComboBox->currentIndex()) ||
+            (item->text() !=removeLineBreaks(SQQuestionTextEdit->toHtml())) || (item->answers() != SQAnswersEdit->answers()) ||
+            (item->compareAnswers() != SQAnswersEdit->compareAnswers()) || (item->selectionType() != SQAnswersEdit->selectionType()) ||
+            (item->explanation() != removeLineBreaks(SQExplanationLineEdit->text())) || item->isHidden() != actionHide->isChecked() ||
+            (((item->selectionType()==Question::SingleSelection) || (item->selectionType() == Question::MultiSelection))&&(item->correctAnswers() != SQAnswersEdit->correctAnswers())) ||
+            (checkSVGItemWasChanges(item->svgItems(), newSvgItems)))
+    {
+        switch (QMessageBox::information(this, tr("iTestServer"), tr("Are you sure you want to change the question?"), tr("&Change"), tr("Do &not change"), 0, 1)) {
+            case 1: // Do not change
+                return;
+        }
+    }
+    else
+        return;
+
+    //Check that correct answer was choosed in Single Selection Type
+    if ((SQAnswersEdit->selectionType() == Question::SingleSelection) && checkEmptyCorrectAnswers(SQAnswersEdit->correctAnswers(), SQAnswersEdit->answers().count()))
+    {
+        if (isOtherQuestionChoosed)
+            changeQuestionEnabled = false;
+        SQSaveErrorLabel->setVisible(true);
+        SQSaveErrorLabel->setText(tr("Save Error: The correct answer is not specified"));
+        return;
+    }
+
+    //Check that answers were inserted
+    if (!checkAllAnswersWereInserted(SQAnswersEdit->answers(), SQAnswersEdit->count()))
+    {
+        if (isOtherQuestionChoosed)
+            changeQuestionEnabled = false;
+        SQSaveErrorLabel->setVisible(true);
+        SQSaveErrorLabel->setText(tr("Save Error: Empty answer"));
+        return;
+    }
+
+    //Check that compare answers were inserted
+    if((SQAnswersEdit->selectionType() == Question::Comparison) && !checkAllAnswersWereInserted(SQAnswersEdit->compareAnswers(), SQAnswersEdit->count()))
+    {
+        if (isOtherQuestionChoosed)
+            changeQuestionEnabled = false;
+        SQSaveErrorLabel->setVisible(true);
+        SQSaveErrorLabel->setText(tr("Save Error: Void answers"));
+        return;
+    }
+
+    // CHECK GROUP
+
     if (!q_group.isEmpty()) {
         QMapIterator<QListWidgetItem *, QuestionItem *> q(current_db_questions);
         while (q.hasNext()) { q.next();
@@ -224,7 +312,6 @@ void MainWindow::applyQuestionChanges()
         }
     }*/
     // CHECK NAME
-    QString q_name = removeLineBreaks(SQQuestionNameLineEdit->text());
     if (current_db_question != q_name) {
         int n = 0;
         QMapIterator<QListWidgetItem *, QuestionItem *> q(current_db_questions);
@@ -261,6 +348,7 @@ void MainWindow::applyQuestionChanges()
             }
         }
     }
+
     // SAVE VALUES
     item->setName(q_name);
     item->setGroup(q_group);
@@ -290,6 +378,33 @@ void MainWindow::applyQuestionChanges()
     hideQuestion(q_item, item);
     statusBar()->showMessage(tr("Data saved"), 10000);
     setDatabaseModified();
+    SQSaveErrorLabel->setVisible(false);
+}
+
+bool MainWindow::checkEmptyCorrectAnswers(Question::Answers answers, int ans_count)
+{
+    for (int i = 0; i < ans_count; ++i)
+    {
+        if (answers.testFlag(Question::indexToAnswer(i + 1)) == true)
+            return false;
+    }
+    return true;
+}
+
+bool MainWindow::checkAllAnswersWereInserted(QList<QString> answers, int ans_count)
+{
+    for (int i = 0; i < ans_count; ++i)
+         if (answers[i].isEmpty())
+             return false;
+    return true;
+}
+
+bool MainWindow::checkSVGItemWasChanges(QList<SvgItem*> questionSVG, QList<SvgItem*> newSVG)
+{
+    if (questionSVG.count() != newSVG.count()) return true;
+    for (int i = 0; i < questionSVG.count(); ++i)
+        if (questionSVG[i]->svg() != newSVG[i]->svg()) return true;
+    return false;
 }
 
 void MainWindow::discardQuestionChanges()

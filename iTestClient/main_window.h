@@ -75,6 +75,7 @@ private slots:
     void setQuestionAnswered(Question::Answers);
     void setQuestionAnswered(QString answer);
     void setQuestionAnswered(int, int, bool);
+    void setCompText(QString);
     void resetQuestionAnswered();
     void previewSvg(const QString &);
 

@@ -55,7 +55,7 @@ class AnswersView : public QWidget
 public:
     AnswersView(QWidget * = 0);
 
-    void setAnswers(const QStringList &, Question::Answers, Question::SelectionType, QList<int>, QString, const QStringList &, const QMap<int,int> &, QList<int>);
+    void setAnswers(const QStringList &, Question::Answers, Question::SelectionType, QList<int>, QString, const QStringList &, const QMap<int,int> &, QList<int>, QString compareText = "");
     Question::Answers selectedAnswers();
 
 public slots:
@@ -65,6 +65,7 @@ signals:
     void buttonReleased(Question::Answers);
     void inputReleased(QString answer);
     void pairMatch(int a1, int a2, bool isAll);
+    void compareTextChanged(QString newText);
     void resetAnswers();
 
 protected slots:
@@ -85,6 +86,7 @@ private:
     QLabel *av_inputanswer_label;
     QTextBrowser *av_input_text;
     QPushButton *av_reanswer_button;
+    QLabel *av_comparePairs_label;
 
     void showOpenQuestion(bool);
     void hideComparison();

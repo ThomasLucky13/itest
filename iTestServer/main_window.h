@@ -129,11 +129,16 @@ private slots:
     void clearCLSC();
     void clearCLSS();
     // QUESTION-RELATED
+    void changedCurrentQuestion();
     void setCurrentQuestion();
     void addQuestion();
     void deleteQuestion();
     void duplicateQuestion();
     void applyQuestionChanges();
+    void applyQuestionChanges(QListWidgetItem *);
+    bool checkEmptyCorrectAnswers(Question::Answers answers, int ans_count);
+    bool checkAllAnswersWereInserted(QList<QString> answers, int ans_count);
+    bool checkSVGItemWasChanges(QList<SvgItem*> questionSVG, QList<SvgItem*> newSVG);
     void discardQuestionChanges();
     static void setQuestionItemColour(QListWidgetItem *, int);
     static void setQuestionItemIcon(QListWidgetItem *, int);
@@ -322,6 +327,11 @@ private:
 
     QString docs_url;
     QMap<QString, QString> itest_i18n;
+
+     QListWidgetItem *current_question_widgetItem;
+     int current_question_Row;
+     bool changeQuestionEnabled;
+     bool isOtherQuestionChoosed;
     // EXCEPTIONS
     class xInvalidDBFile {
     public:

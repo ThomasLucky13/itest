@@ -18,6 +18,7 @@
 ********************************************************************/
 
 #include "question_item.h"
+#include <QRandomGenerator>
 
 QuestionItem::QuestionItem(const QString &name)
 {
@@ -33,6 +34,7 @@ QuestionItem::QuestionItem(const QString &name)
          q_comp_ans_order << i;
      }
      allCompAnswered = false;
+     compText = "";
 }
 
 void QuestionItem::shuffleAnswers()
@@ -41,7 +43,7 @@ void QuestionItem::shuffleAnswers()
     int rand;
     for (int i = 0; i < q_answers.count(); ++i) {
         do {
-            rand = qrand() % q_answers.count();
+            rand = QRandomGenerator::global()->bounded(q_answers.count());
         } while (q_ans_order.contains(rand));
         q_ans_order << rand;
     }
@@ -53,7 +55,7 @@ void QuestionItem::shuffleCompAnswers()
     int rand;
     for (int i = 0; i < q_compareAnswers.count(); ++i) {
         do {
-            rand = qrand() % q_compareAnswers.count();
+            rand = QRandomGenerator::global()->bounded(q_compareAnswers.count());
         } while (q_comp_ans_order.contains(rand));
         q_comp_ans_order << rand;
     }

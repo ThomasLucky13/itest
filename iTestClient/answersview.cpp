@@ -104,6 +104,8 @@ QWidget(parent) {
     hReAnsLayout->addWidget(av_reanswer_button);
     hReAnsLayout->addSpacerItem(new QSpacerItem(20,40,  QSizePolicy::Policy::Expanding,QSizePolicy::Policy::Preferred));
     vlayout->addLayout(hReAnsLayout);
+    av_comparePairs_label = new QLabel();
+    vlayout->addWidget(av_comparePairs_label);
     QObject::connect(av_grp_checkboxes, SIGNAL(buttonReleased(QAbstractButton *)), this, SLOT(emitButtonReleased(QAbstractButton *)));
     QObject::connect(av_grp_radiobuttons, SIGNAL(buttonReleased(QAbstractButton *)), this, SLOT(emitButtonReleased(QAbstractButton *)));
     QObject::connect(av_grp_ansbuttons1, SIGNAL(idClicked(int)), this, SLOT(compareAnswer1Choosed(int)));
@@ -113,7 +115,7 @@ QWidget(parent) {
 }
 
 void AnswersView::setAnswers(const QStringList &answers, Question::Answers selected_answers, Question::SelectionType selectiontype, QList<int> ans_order,
-                              QString str_answered, const QStringList & compAnswers,const QMap<int,int> & comp_pairs, QList<int> comp_ans_order)
+                              QString str_answered, const QStringList & compAnswers,const QMap<int,int> & comp_pairs, QList<int> comp_ans_order, QString compareText)
 {
     if (selectiontype == Question::OpenQuestion)
     {
@@ -124,6 +126,8 @@ void AnswersView::setAnswers(const QStringList &answers, Question::Answers selec
     }
     else if (selectiontype == Question::Comparison)
     {
+        av_comparePairs_label->setVisible(true);
+        av_comparePairs_label->setText(compareText);
         showOpenQuestion(false);
         hideSelectAnswer();
         av_ans_order = ans_order;
@@ -207,6 +211,7 @@ void AnswersView::clear()
     av_grp_radiobuttons->setExclusive(true);
     av_input_text->setText("");
     av_ans1_compInd = -1; av_ans2_compInd = -1;
+    av_comparePairs_label->setText("");
 }
 
 void AnswersView::emitButtonReleased(QAbstractButton *)
@@ -238,6 +243,7 @@ void AnswersView::hideComparison()
         QPushButton *ans = dynamic_cast<QPushButton*>(av_grp_ansbuttons2->button(i));
         ans->setVisible(false);
     }
+    av_comparePairs_label->setVisible(false);
 }
 
 void AnswersView::hideSelectAnswer()
@@ -315,6 +321,14 @@ void AnswersView::matchComparison()
     }
     emit pairMatch(av_ans1_compInd, av_ans2_compInd, isAll);
 
+    QString displayText = av_comparePairs_label->text();
+    if (!displayText.isEmpty())
+        displayText += "  |  ";
+    displayText += ans1->text();
+    displayText += " - ";
+    displayText += ans2->text();
+    av_comparePairs_label->setText(displayText);
+    emit compareTextChanged(displayText);
     av_ans1_compInd = -1; av_ans2_compInd = -1;
 }
 
@@ -331,4 +345,5 @@ void AnswersView::resetAnswersClick()
     }
     emit resetAnswers();
     av_ans1_compInd = -1; av_ans2_compInd = -1;
+    av_comparePairs_label->setText("");
 }

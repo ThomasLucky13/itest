@@ -77,6 +77,7 @@ QWidget(parent) {
     ae_singleselection = new QRadioButton(tr("Single choice"), this);
     ae_singleselection->setStatusTip(tr("Single choice questions allow selecting one answer only, even if the question has more correct answers"));
     ae_singleselection->setChecked(true);
+    ae_singleselection->setIcon(QIcon(":/images/images/SingleSelection.svg"));
     hlayout->addWidget(ae_singleselection);
     connect(ae_singleselection, SIGNAL(toggled(bool)), this, SLOT(setSingleSelectionView(bool)));
 #ifdef Q_OS_MAC
@@ -86,14 +87,17 @@ QWidget(parent) {
 #endif
     ae_multiselection = new QRadioButton(tr("Multiple choice"), this);
     ae_multiselection->setStatusTip(tr("Multiple choice questions allow selecting more answers"));
+    ae_multiselection->setIcon(QIcon(":/images/images/MultiSelection.svg"));
     hlayout->addWidget(ae_multiselection);
     connect(ae_multiselection, SIGNAL(toggled(bool)), this, SLOT(setMultiSelectionView(bool)));
     ae_openquestion = new QRadioButton(tr("Open question"), this);
     ae_openquestion->setStatusTip(tr("Open questions allow enter the answer manually"));
+    ae_openquestion->setIcon(QIcon(":/images/images/OpenQuestion.svg"));
     hlayout->addWidget(ae_openquestion);
     connect(ae_openquestion, SIGNAL(toggled(bool)), this, SLOT(setOpenQuestionView(bool)));
     ae_comparison = new QRadioButton(tr("Comparison"), this);
     ae_comparison->setStatusTip(tr("Comparison allow match words in pairs"));
+    ae_comparison->setIcon(QIcon(":/images/images/Comparison.svg"));
     hlayout->addWidget(ae_comparison);
     connect(ae_comparison, SIGNAL(toggled(bool)), this, SLOT(setComparisonView(bool)));
 #ifdef Q_OS_MAC
@@ -119,6 +123,8 @@ QWidget(parent) {
     vlayout_ans1->setContentsMargins(0, 0, 0, 0); vlayout_ans1->setSpacing(6);
     QVBoxLayout *vlayout_ans2 = new QVBoxLayout;
     vlayout_ans2->setContentsMargins(0, 0, 0, 0); vlayout_ans2->setSpacing(6);
+
+    checkButtonGroup = new QButtonGroup();
     for (int i = 0; i < 9; ++i) {
         AnswerEdit *ans = new AnswerEdit(i, this);
         AnswerEdit *ans_2 = new AnswerEdit(i, this);
@@ -133,7 +139,9 @@ QWidget(parent) {
         ae_compare_answers << ans_2;
         vlayout_ans1->addWidget(ans);
         vlayout_ans2->addWidget(ans_2);
+        checkButtonGroup->addButton(ans->ans_correct, i);
     }
+
     QHBoxLayout *hlayout_ans = new QHBoxLayout;
     hlayout_ans->addLayout(vlayout_ans1);
     hlayout_ans->addLayout(vlayout_ans2);
@@ -254,12 +262,18 @@ QString AnswersEdit::answer(int i)
 
 void AnswersEdit::setSingleSelectionView(bool check)
 {
+    foreach (QAbstractButton* button, checkButtonGroup->buttons()) {
+       checkButtonGroup->removeButton(button);
+    }
     if (check)
     {
         ae_correct_label->setVisible(true);
         ae_openanswer_label->setVisible(false);
         for (int i = 0; i < 9; ++i)
+        {
             ae_answers.at(i)->ans_correct->setVisible(true);
+            checkButtonGroup->addButton(ae_answers.at(i)->ans_correct, i);
+        }
         for (int i = 0; i < 9; ++i)
             ae_compare_answers.at(i)->setVisible(false);
     }

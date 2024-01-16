@@ -35,6 +35,7 @@
 #include <QSettings>
 #include <QSvgRenderer>
 #include <QUrl>
+#include <QRandomGenerator>
 
 PrintQuestionsDialogue::PrintQuestionsDialogue(MainWindow *parent):
 QWidget(parent, Qt::Dialog /*| Qt::WindowMaximizeButtonHint*/)
@@ -1265,7 +1266,7 @@ QString MainWindow::htmlForQuestion(QuestionItem *item, int n, QTextDocument &do
             painter.drawRect(QRect(0, 0, svg_size.width(), svg_size.height()));
             painter.restore();
             svgrenderer.render(&painter);
-            QUrl resource_url(QString("%1-%2-%3.qpixmap").arg(item->name()).arg(i).arg(qrand()));
+            QUrl resource_url(QString("%1-%2-%3.qpixmap").arg(item->name()).arg(i).arg(QRandomGenerator::global()->generate()));
             doc.addResource(QTextDocument::ImageResource, resource_url, pixmap);
             out << "<td align=\"center\"><img src=\"" << resource_url.toString(QUrl::None) << "\"></td>" << endl;
         }
